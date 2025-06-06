@@ -1,6 +1,18 @@
 import { NextResponse } from "next/server";
 import { serialize } from "cookie";
-import { db } from "@/lib/firestore";
+import admin from "firebase-admin";
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    }),
+  });
+}
+
+const db = admin.firestore();
 
 export async function POST(req: Request) {
   try {
@@ -8,28 +20,14 @@ export async function POST(req: Request) {
     const code = body.code;
 
     if (!code) {
-      return NextResponse.json(
-        { success: false, error: "Código ausente." },
-        { status: 400 }
-      );
-    }
-
-    const clientId = process.env.PATREON_CLIENT_ID ?? "MISSING_CLIENT_ID";
-    const clientSecret = process.env.PATREON_CLIENT_SECRET ?? "MISSING_SECRET";
-
-    if (clientId === "MISSING_CLIENT_ID" || clientSecret === "MISSING_SECRET") {
-      console.error("❌ Variáveis de ambiente ausentes.");
-      return NextResponse.json(
-        { success: false, error: "Configuração do servidor inválida." },
-        { status: 500 }
-      );
+      return NextResponse.json({ success: false, error: "Código ausente." }, { status: 400 });
     }
 
     const tokenParams = new URLSearchParams({
       code,
       grant_type: "authorization_code",
-      client_id: clientId,
-      client_secret: clientSecret,
+      client_id: process.env.PATREON_CLIENT_ID!,
+      client_secret: process.env.PATREON_CLIENT_SECRET!,
       redirect_uri: "https://www.uobabel.com/patreon/callback",
     });
 
@@ -40,25 +38,22 @@ export async function POST(req: Request) {
     });
 
     const tokenData = await tokenRes.json();
+    console.log("🎫 Token data:", tokenData);
 
     if (!tokenData.access_token) {
-      console.error("❌ Erro ao obter access_token:", tokenData);
-      return NextResponse.json(
-        { success: false, error: "Token inválido." },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Token inválido." }, { status: 401 });
     }
 
     const userRes = await fetch(
       "https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields[member]=patron_status&fields[user]=full_name",
       {
-        headers: {
-          Authorization: `Bearer ${tokenData.access_token}`,
-        },
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
       }
     );
 
     const userData = await userRes.json();
+    console.log("👤 User data:", userData);
+
     const patreonId = userData.data?.id;
     const fullName = userData.data?.attributes?.full_name;
     const isSubscriber = userData.included?.some(
@@ -72,7 +67,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Salvar no Firestore
     await db.collection("vinculos").doc(patreonId).set(
       {
         fullName,
@@ -82,7 +76,6 @@ export async function POST(req: Request) {
       { merge: true }
     );
 
-    // Criar cookie
     const response = NextResponse.json({
       success: true,
       isSubscriber,
@@ -94,15 +87,15 @@ export async function POST(req: Request) {
       "Set-Cookie",
       serialize("patreon_id", patreonId, {
         path: "/",
-        maxAge: 60 * 60 * 24 * 30, // 30 dias
+        maxAge: 60 * 60 * 24 * 30,
         httpOnly: false,
         sameSite: "lax",
       })
     );
 
     return response;
-  } catch (err) {
-    console.error("❌ Erro interno:", err);
+  } catch (err: any) {
+    console.error("❌ Erro interno no token.ts:", err);
     return NextResponse.json(
       { success: false, error: "Erro interno ao processar autenticação." },
       { status: 500 }
