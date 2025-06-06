@@ -47,9 +47,15 @@ const Home: FC = () => {
           </a>
         </section>
       </main>
-      <div className={styles.main}>
-        <Link href="/login">Entrar com Patreon</Link>
-      </div>
+      <main className={styles.main}>
+        <section className={styles.intro}>
+          <h2> Quer acesso Ilimitado no servidor?</h2>
+          <p>Assine o Patreon para ter acesso a funcionalidades exclusivas.</p>
+          <a href="/login" className={styles.btn}>
+            Entrar com Patreon
+          </a>
+        </section>
+      </main>
 
       <footer className={styles.footer}>
         <p>&copy; 2025 UO Babel. Todos os direitos reservados.</p>
