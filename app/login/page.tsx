@@ -7,10 +7,11 @@ import logo from "../../public/logo.png";
 
 export default function LoginPage() {
   const clientId = process.env.NEXT_PUBLIC_PATREON_CLIENT_ID;
-  const redirectUri = encodeURIComponent(
-    "https://www.uobabel.com/patreon/callback"
-  );
+  const rawRedirectUri = "https://www.uobabel.com/patreon/callback";
+  const encodedRedirectUri = encodeURIComponent(rawRedirectUri);
   const scope = encodeURIComponent("identity identity.memberships");
+
+
 
   // ⛔ Aviso se clientId não estiver definido
   if (!clientId) {
@@ -25,7 +26,7 @@ export default function LoginPage() {
   }
 
   // 🔗 URL segura de login com OAuth
-  const loginUrl = `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
+  const loginUrl = `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodedRedirectUri}&scope=${scope}`;
 
   return (
     <div className={styles.container}>
