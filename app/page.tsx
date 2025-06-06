@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { FC } from "react";
 import styles from "../styles/Home.module.css";
 import logo from "../public/logo.png";
+import Link from "next/link";
 
 const Home: FC = () => {
   return (
@@ -46,6 +47,9 @@ const Home: FC = () => {
           </a>
         </section>
       </main>
+      <div className={styles.main}>
+        <Link href="/login">Entrar com Patreon</Link>
+      </div>
 
       <footer className={styles.footer}>
         <p>&copy; 2025 UO Babel. Todos os direitos reservados.</p>
