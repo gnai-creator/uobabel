@@ -31,6 +31,7 @@ const Home: FC = () => {
           <p>
             Um dragão atacou a Torre de Babel. Um novo mundo nasce das cinzas.
           </p>
+          <p>Baixe agora o client do servidor e comece a jogar.</p>
           <a href="./UO Babel Launcher.zip" className={styles.btn}>
             Download Client
           </a>
@@ -38,10 +39,8 @@ const Home: FC = () => {
       </main>
       <main className={styles.main}>
         <section className={styles.intro}>
-          <h2>🔥 Entre em contato</h2>
-          <p>
-            Entre em contato com o servidor para saber mais sobre o servidor.
-          </p>
+          <h2>🌐 Junte-se a nossa comunidade</h2>
+          <p>Entre em contato para saber mais sobre o servidor.</p>
           <a href="https://discord.gg/Hj2ZfzHWu5" className={styles.btn}>
             Entrar no Discord
           </a>
