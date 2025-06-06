@@ -4,7 +4,8 @@ import { db } from "@/lib/firestore";
 
 export async function POST(req: Request) {
   try {
-    const { code } = await req.json();
+    const body = await req.json();
+    const code = body.code;
 
     if (!code) {
       return NextResponse.json(
@@ -13,11 +14,22 @@ export async function POST(req: Request) {
       );
     }
 
+    const clientId = process.env.PATREON_CLIENT_ID ?? "MISSING_CLIENT_ID";
+    const clientSecret = process.env.PATREON_CLIENT_SECRET ?? "MISSING_SECRET";
+
+    if (clientId === "MISSING_CLIENT_ID" || clientSecret === "MISSING_SECRET") {
+      console.error("❌ Variáveis de ambiente ausentes.");
+      return NextResponse.json(
+        { success: false, error: "Configuração do servidor inválida." },
+        { status: 500 }
+      );
+    }
+
     const tokenParams = new URLSearchParams({
       code,
       grant_type: "authorization_code",
-      client_id: process.env.PATREON_CLIENT_ID ?? "",
-      client_secret: process.env.PATREON_CLIENT_SECRET ?? "",
+      client_id: clientId,
+      client_secret: clientSecret,
       redirect_uri: "https://www.uobabel.com/patreon/callback",
     });
 
@@ -29,10 +41,10 @@ export async function POST(req: Request) {
 
     const tokenData = await tokenRes.json();
 
-    if (!tokenRes.ok || !tokenData.access_token) {
-      console.error("Erro ao obter token do Patreon:", tokenData);
+    if (!tokenData.access_token) {
+      console.error("❌ Erro ao obter access_token:", tokenData);
       return NextResponse.json(
-        { success: false, error: "Token inválido ou expirado." },
+        { success: false, error: "Token inválido." },
         { status: 401 }
       );
     }
@@ -47,16 +59,15 @@ export async function POST(req: Request) {
     );
 
     const userData = await userRes.json();
-
-    const patreonId = userData?.data?.id;
-    const fullName = userData?.data?.attributes?.full_name;
-    const isSubscriber = userData?.included?.some(
+    const patreonId = userData.data?.id;
+    const fullName = userData.data?.attributes?.full_name;
+    const isSubscriber = userData.included?.some(
       (m: any) => m.attributes?.patron_status === "active_patron"
     );
 
     if (!patreonId || !fullName) {
       return NextResponse.json(
-        { success: false, error: "Dados incompletos do Patreon." },
+        { success: false, error: "Dados incompletos do usuário." },
         { status: 400 }
       );
     }
@@ -67,16 +78,15 @@ export async function POST(req: Request) {
         fullName,
         isSubscriber,
         loginUO: null,
-        updatedAt: new Date().toISOString(),
       },
       { merge: true }
     );
 
-    // Retorna resposta com cookie
+    // Criar cookie
     const response = NextResponse.json({
       success: true,
-      patreonId,
       isSubscriber,
+      patreonId,
       name: fullName,
     });
 
@@ -84,15 +94,15 @@ export async function POST(req: Request) {
       "Set-Cookie",
       serialize("patreon_id", patreonId, {
         path: "/",
-        maxAge: 60 * 60 * 24 * 30,
-        httpOnly: false, // pode mudar para true se não precisar acessar via JS
+        maxAge: 60 * 60 * 24 * 30, // 30 dias
+        httpOnly: false,
         sameSite: "lax",
       })
     );
 
     return response;
-  } catch (err: any) {
-    console.error("Erro fatal no endpoint /api/token:", err);
+  } catch (err) {
+    console.error("❌ Erro interno:", err);
     return NextResponse.json(
       { success: false, error: "Erro interno ao processar autenticação." },
       { status: 500 }
