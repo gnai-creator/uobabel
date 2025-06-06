@@ -20,7 +20,10 @@ export async function POST(req: Request) {
     const code = body.code;
 
     if (!code) {
-      return NextResponse.json({ success: false, error: "Código ausente." }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "Código ausente." },
+        { status: 400 }
+      );
     }
 
     const tokenParams = new URLSearchParams({
@@ -41,7 +44,10 @@ export async function POST(req: Request) {
     console.log("🎫 Token data:", tokenData);
 
     if (!tokenData.access_token) {
-      return NextResponse.json({ success: false, error: "Token inválido." }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: "Token inválido." },
+        { status: 401 }
+      );
     }
 
     const userRes = await fetch(
@@ -67,14 +73,14 @@ export async function POST(req: Request) {
       );
     }
 
-    await db.collection("vinculos").doc(patreonId).set(
-      {
-        fullName,
-        isSubscriber,
-        loginUO: null,
-      },
-      { merge: true }
-    );
+    // await db.collection("vinculos").doc(patreonId).set(
+    //   {
+    //     fullName,
+    //     isSubscriber,
+    //     loginUO: null,
+    //   },
+    //   { merge: true }
+    // );
 
     const response = NextResponse.json({
       success: true,
