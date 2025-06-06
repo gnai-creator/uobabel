@@ -1,4 +1,3 @@
-// app/login/page.tsx
 "use client";
 
 import Head from "next/head";
@@ -7,7 +6,22 @@ import styles from "../../styles/Home.module.css";
 import logo from "../../public/logo.png";
 
 export default function LoginPage() {
-  const loginUrl = `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_PATREON_CLIENT_ID}&redirect_uri=https://www.uobabel.com/patreon/callback&scope=identity%20identity.memberships`;
+  const clientId = process.env.NEXT_PUBLIC_PATREON_CLIENT_ID;
+  const redirectUri = "https://www.uobabel.com/patreon/callback";
+  const scope = "identity%20identity.memberships";
+
+  if (!clientId) {
+    return (
+      <div className={styles.container}>
+        <p style={{ color: "red", textAlign: "center", marginTop: "2rem" }}>
+          ⚠️ Erro: NEXT_PUBLIC_PATREON_CLIENT_ID não definido. Verifique seu
+          .env ou variáveis no Vercel.
+        </p>
+      </div>
+    );
+  }
+
+  const loginUrl = `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
 
   return (
     <div className={styles.container}>
