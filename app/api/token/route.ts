@@ -66,6 +66,8 @@ export async function POST(req: Request) {
       (m: any) => m.attributes?.patron_status === "active_patron"
     );
 
+    const membership = userData.included?.find((m: any) => m.type === "member");
+
     if (!patreonId) {
       return NextResponse.json(
         { success: false, error: "ID do usuário não encontrado." },
@@ -73,27 +75,33 @@ export async function POST(req: Request) {
       );
     }
 
-    // Salvar no Firestore
-    await db.collection("vinculos").doc(patreonId).set(
-      {
-        fullName,
-        isSubscriber: !!isSubscriber,
-        loginUO: null,
-      },
-      { merge: true }
-    );
+    await db
+      .collection("vinculos")
+      .doc(patreonId)
+      .set(
+        {
+          fullName,
+          isSubscriber: !!isSubscriber,
+          loginUO: null,
+          patronStatus: membership?.attributes?.patron_status,
+          tier:
+            membership?.relationships?.currently_entitled_tiers?.data?.[0]
+              ?.id || null,
+        },
+        { merge: true }
+      );
 
-    // Se não for assinante, avisa o frontend para redirecionar
     if (!isSubscriber) {
-      return NextResponse.json({
-        success: false,
-        requiresSubscription: true,
-        patreonId,
-        name: fullName,
-      });
+      return NextResponse.json(
+        {
+          success: false,
+          requiresSubscription: true,
+          error: "Usuário não é um assinante ativo.",
+        },
+        { status: 403 }
+      );
     }
 
-    // Criar cookie e retornar sucesso
     const response = NextResponse.json({
       success: true,
       isSubscriber,
