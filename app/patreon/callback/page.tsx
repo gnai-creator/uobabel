@@ -10,18 +10,30 @@ function CallbackInner() {
 
   useEffect(() => {
     if (code) {
-      fetch("/api/patreon/token", {
+      fetch("/api/token", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
+        headers: { "Content-Type": "application/json" },
       })
-        .then((res) => res.json())
+        .then(async (res) => {
+          if (!res.ok) {
+            const text = await res.text();
+            console.error("Erro brabo na /api/token:", res.status, text);
+            throw new Error("Erro na resposta do servidor");
+          }
+          return res.json();
+        })
         .then((data) => {
+          console.log("Token response:", data);
           if (data.success) {
             router.push("/painel");
           } else {
-            alert("Erro ao autenticar com o Patreon.");
+            alert("Erro: " + data.error);
           }
+        })
+        .catch((err) => {
+          console.error("Erro fatal no callback:", err);
+          alert("Falha ao verificar sua conta do Patreon.");
         });
     }
   }, [code, router]);
