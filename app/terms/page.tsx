@@ -10,7 +10,7 @@ export default function TermsOfService() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <main className={styles.main}>
+      <main className={styles.verticalPage}>
         <h1 className={styles.title}>Termos de Uso</h1>
         <p className={styles.description}>
           Estes termos regem o uso do servidor e site UO Babel. Ao jogar ou acessar o site, você concorda com estas condições.

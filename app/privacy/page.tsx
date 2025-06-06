@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <main className={styles.main}>
+      <main className={styles.verticalPage}>
         <h1 className={styles.title}>Política de Privacidade</h1>
         <p className={styles.description}>
           Esta política descreve como coletamos, usamos e protegemos seus dados
