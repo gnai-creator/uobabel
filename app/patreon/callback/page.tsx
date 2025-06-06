@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, X, ArrowLeft } from "lucide-react";
 
 export default function CallbackPage() {
   const router = useRouter();
@@ -41,13 +41,12 @@ export default function CallbackPage() {
           toast.success("✅ Conta vinculada com sucesso!");
           router.push("/painel");
         } else {
-          toast.error("❌ " + (data.error || "Erro inesperado."));
-          setErro(data.error || "Erro desconhecido.");
+          setErro(data.error || "Erro inesperado ao autenticar.");
         }
       } catch (err) {
         toast.dismiss();
         setErro("Erro de rede ao autenticar. Tente novamente.");
-        console.error("Erro fatal no callback:", err);
+        console.error("Erro fatal:", err);
       }
     };
 
@@ -55,26 +54,39 @@ export default function CallbackPage() {
   }, [code, router]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen text-center px-4">
-      {carregando ? (
-        <>
+    <div className="flex items-center justify-center h-screen bg-white text-center px-4">
+      {carregando && (
+        <div className="flex flex-col items-center">
           <Loader2 className="h-10 w-10 animate-spin text-blue-600 mb-4" />
           <p className="text-lg text-gray-700">
             Verificando sua conta do Patreon...
           </p>
-        </>
-      ) : erro ? (
-        <>
-          <p className="text-lg text-red-600 mb-2">❌ {erro}</p>
-          <button
-            onClick={() => router.push("/")}
-            className="mt-4 flex items-center px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
-          >
-            <ArrowLeft className="mr-2 w-4 h-4" />
-            Voltar ao site
-          </button>
-        </>
-      ) : null}
+        </div>
+      )}
+
+      {erro && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-6 text-center relative">
+            <button
+              onClick={() => router.push("/")}
+              className="absolute top-2 right-2 text-gray-400 hover:text-red-600"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h2 className="text-xl font-bold text-red-600 mb-2">Erro</h2>
+            <p className="text-gray-700 mb-4">{erro}</p>
+
+            <button
+              onClick={() => router.push("/")}
+              className="mt-2 inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            >
+              <ArrowLeft className="mr-2 w-4 h-4" />
+              Voltar ao site
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
