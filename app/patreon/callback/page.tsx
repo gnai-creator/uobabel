@@ -1,9 +1,9 @@
-// app/patreon/callback/page.tsx
 "use client";
-import { useEffect } from "react";
+
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function PatreonCallback() {
+function CallbackInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
@@ -18,14 +18,21 @@ export default function PatreonCallback() {
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            // salvar token localmente, ou redirecionar pro jogo
             router.push("/painel");
           } else {
-            alert("Erro ao autenticar com Patreon.");
+            alert("Erro ao autenticar com o Patreon.");
           }
         });
     }
   }, [code, router]);
 
   return <p>Verificando sua conta do Patreon...</p>;
+}
+
+export default function CallbackPage() {
+  return (
+    <Suspense fallback={<p>Carregando...</p>}>
+      <CallbackInner />
+    </Suspense>
+  );
 }
