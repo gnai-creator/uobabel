@@ -9,38 +9,35 @@ function CallbackInner() {
   const code = searchParams.get("code");
 
   useEffect(() => {
-    if (code) {
-      fetch("/api/token", {
-        method: "POST",
-        body: JSON.stringify({ code }),
-        headers: { "Content-Type": "application/json" },
-      })
-        .then(async (res) => {
-          if (!res.ok) {
-            const text = await res.text();
-            console.error("Erro brabo na /api/token:", res.status, text);
-            throw new Error("Erro na resposta do servidor");
-          }
-          return res.json();
-        })
-        .then((data) => {
-          console.log("Token response:", data);
-          if (data.success) {
-            router.push("/painel");
-          } else if (data.requiresSubscription) {
-            alert(
-              "Você vinculou sua conta, mas ainda não é assinante. Por favor, apoie para desbloquear o conteúdo premium."
-            );
-            window.location.href = "https://www.patreon.com/uobabel";
-          } else {
-            alert("Erro: " + data.error);
-          }
-        })
-        .catch((err) => {
-          console.error("Erro fatal no callback:", err);
-          alert("Falha ao verificar sua conta do Patreon.");
+    if (!code) return;
+
+    const autenticar = async () => {
+      try {
+        const res = await fetch("/api/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
         });
-    }
+
+        const data = await res.json();
+
+        if (res.status === 403 && data?.requiresSubscription) {
+          alert(
+            "Você vinculou sua conta, mas ainda não é assinante. Por favor, apoie para desbloquear o conteúdo premium."
+          );
+          window.location.href = "https://www.patreon.com/uobabel";
+        } else if (data.success) {
+          router.push("/painel");
+        } else {
+          alert("Erro: " + (data.error || "Erro inesperado."));
+        }
+      } catch (err) {
+        console.error("Erro fatal no callback:", err);
+        alert("Falha ao verificar sua conta do Patreon.");
+      }
+    };
+
+    autenticar();
   }, [code, router]);
 
   return <p>Verificando sua conta do Patreon...</p>;
