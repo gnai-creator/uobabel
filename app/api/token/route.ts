@@ -73,7 +73,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Corrigido: usar a variável `fullName` já existente
+    // Salvar no Firestore
     await db.collection("vinculos").doc(patreonId).set(
       {
         fullName,
@@ -83,6 +83,17 @@ export async function POST(req: Request) {
       { merge: true }
     );
 
+    // Se não for assinante, avisa o frontend para redirecionar
+    if (!isSubscriber) {
+      return NextResponse.json({
+        success: false,
+        requiresSubscription: true,
+        patreonId,
+        name: fullName,
+      });
+    }
+
+    // Criar cookie e retornar sucesso
     const response = NextResponse.json({
       success: true,
       isSubscriber,

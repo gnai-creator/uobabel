@@ -27,6 +27,11 @@ function CallbackInner() {
           console.log("Token response:", data);
           if (data.success) {
             router.push("/painel");
+          } else if (data.requiresSubscription) {
+            alert(
+              "Você vinculou sua conta, mas ainda não é assinante. Por favor, apoie para desbloquear o conteúdo premium."
+            );
+            window.location.href = "https://www.patreon.com/uobabel";
           } else {
             alert("Erro: " + data.error);
           }
