@@ -1,19 +1,17 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import { serialize } from "cookie";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") return res.status(405).end();
-
-  const { code } = req.body;
+export async function POST(req: Request) {
+  const body = await req.json();
+  const code = body.code;
 
   if (!code) {
-    return res.status(400).json({ success: false, error: "Código ausente." });
+    return NextResponse.json(
+      { success: false, error: "Código ausente." },
+      { status: 400 }
+    );
   }
 
-  // Troca o código por um access token
   const tokenParams = new URLSearchParams({
     code,
     grant_type: "authorization_code",
@@ -31,12 +29,14 @@ export default async function handler(
   const tokenData = await tokenRes.json();
 
   if (!tokenData.access_token) {
-    return res.status(401).json({ success: false, error: "Token inválido." });
+    return NextResponse.json(
+      { success: false, error: "Token inválido." },
+      { status: 401 }
+    );
   }
 
-  // Pega dados do usuário
   const userRes = await fetch(
-    "https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields[member]=patron_status&fields[user]=full_name,social_connections",
+    "https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields[member]=patron_status&fields[user]=full_name",
     {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
     }
@@ -49,26 +49,29 @@ export default async function handler(
   );
 
   if (!patreonId) {
-    return res
-      .status(400)
-      .json({ success: false, error: "ID do usuário não encontrado." });
+    return NextResponse.json(
+      { success: false, error: "ID do usuário não encontrado." },
+      { status: 400 }
+    );
   }
 
-  // Define cookie com o ID do usuário Patreon
-  res.setHeader(
-    "Set-Cookie",
-    serialize("patreon_id", patreonId, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30, // 30 dias
-      httpOnly: false, // se for usado no client
-      sameSite: "lax",
-    })
-  );
-
-  return res.status(200).json({
+  // Cria cookie no formato Set-Cookie manualmente
+  const response = NextResponse.json({
     success: true,
     isSubscriber,
     patreonId,
     name: userData.data.attributes.full_name,
   });
+
+  response.headers.set(
+    "Set-Cookie",
+    serialize("patreon_id", patreonId, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, // 30 dias
+      httpOnly: false,
+      sameSite: "lax",
+    })
+  );
+
+  return response;
 }
