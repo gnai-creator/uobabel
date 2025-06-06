@@ -42,6 +42,13 @@ const Home: FC = () => {
           <a href="./UO Babel Launcher.zip" className={styles.btn}>
             Download Client
           </a>
+
+          <a
+            href="https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabelReady.zip?alt=media&token=30d685e8-55fd-458d-a0cf-01987af868d3"
+            className={styles.btn}
+          >
+            Download Client Zip
+          </a>
         </section>
       </main>
       <main className={styles.main}>
