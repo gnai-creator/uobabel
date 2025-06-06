@@ -8,6 +8,11 @@ export default function PainelPage() {
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading"
   );
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
     fetch("/api/patreon/me")
@@ -25,41 +30,83 @@ export default function PainelPage() {
   }, []);
 
   const salvarLogin = async () => {
+    setSaving(true);
+    setMessage(null);
+
     const res = await fetch("/api/vincular-login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ loginUO }),
     });
+
     const json = await res.json();
-    if (json.success) alert("Login vinculado com sucesso!");
+    setSaving(false);
+
+    if (json.success) {
+      setMessage({ type: "success", text: "✅ Login vinculado com sucesso!" });
+    } else {
+      setMessage({
+        type: "error",
+        text: "❌ Erro ao salvar o login. Tente novamente.",
+      });
+    }
   };
 
-  if (status === "loading") return <p>Carregando painel...</p>;
+  if (status === "loading")
+    return <p className="text-center mt-10">Carregando painel...</p>;
   if (status === "error")
-    return <p>Erro ao carregar suas informações. Faça login novamente.</p>;
+    return (
+      <p className="text-center text-red-600 mt-10">
+        Erro ao carregar suas informações. Faça login novamente.
+      </p>
+    );
 
   return (
-    <main style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>🎉 Bem-vindo, {user.fullName || "Patrono"}!</h1>
-      <p>Obrigado por apoiar o servidor UO Babel no Patreon.</p>
+    <main className="max-w-xl mx-auto p-6 text-center">
+      <h1 className="text-3xl font-bold mb-2">
+        🎉 Bem-vindo, {user.fullName || "Patrono"}!
+      </h1>
+      <p className="text-gray-600">
+        Obrigado por apoiar o servidor <strong>UO Babel</strong> no Patreon.
+      </p>
 
-      <div style={{ marginTop: "2rem" }}>
-        <h2>🧙 Vincular conta do Ultima Online</h2>
-        <p>Informe o nome de login que você usa no jogo:</p>
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-2">
+          🧙 Vincular conta do Ultima Online
+        </h2>
+        <p className="mb-4 text-gray-500">
+          Informe o nome de login que você usa no jogo:
+        </p>
+
         <input
           type="text"
           value={loginUO}
           onChange={(e) => setLoginUO(e.target.value)}
           placeholder="Ex: arthur_dragon"
-          style={{ padding: "0.5rem", fontSize: "1rem" }}
+          className="w-full px-4 py-2 border rounded text-lg mb-4"
         />
-        <br />
+
         <button
           onClick={salvarLogin}
-          style={{ marginTop: "1rem", padding: "0.5rem 1rem" }}
+          disabled={saving || !loginUO.trim()}
+          className={`px-6 py-2 rounded text-white ${
+            saving || !loginUO.trim()
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
         >
-          Salvar login do UO
+          {saving ? "Salvando..." : "Salvar login do UO"}
         </button>
+
+        {message && (
+          <p
+            className={`mt-4 ${
+              message.type === "success" ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {message.text}
+          </p>
+        )}
       </div>
     </main>
   );
