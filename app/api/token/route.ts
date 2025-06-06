@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { serialize } from "cookie";
 import admin from "firebase-admin";
 
-// 🔐 Inicialização segura do Firebase
+// 🔐 Inicialização segura do Firebase Admin
 if (!admin.apps.length) {
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
   if (!privateKey) throw new Error("FIREBASE_PRIVATE_KEY ausente ou inválido");
@@ -20,8 +20,7 @@ const db = admin.firestore();
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const code = body.code;
+    const { code } = await req.json();
 
     if (!code) {
       return NextResponse.json(
@@ -30,8 +29,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("🔁 Trocando código por token...");
-
+    // 🎫 Troca o código pelo token de acesso
     const tokenParams = new URLSearchParams({
       code,
       grant_type: "authorization_code",
@@ -47,7 +45,6 @@ export async function POST(req: Request) {
     });
 
     const tokenData = await tokenRes.json();
-    console.log("🎫 Token recebido:", tokenData);
 
     if (!tokenData.access_token) {
       return NextResponse.json(
@@ -56,8 +53,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("👤 Buscando dados do usuário...");
-
+    // 👤 Busca os dados do usuário e da assinatura
     const userRes = await fetch(
       "https://www.patreon.com/api/oauth2/v2/identity?include=memberships.currently_entitled_tiers&fields[member]=patron_status&fields[user]=full_name",
       {
@@ -66,7 +62,6 @@ export async function POST(req: Request) {
     );
 
     const userData = await userRes.json();
-    console.log("🧾 Dados do Patreon:", JSON.stringify(userData, null, 2));
 
     const patreonId = userData.data?.id;
     const fullName = userData.data?.attributes?.full_name || "Patrono";
@@ -85,7 +80,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 💾 Armazena vínculo no Firestore
+    // 💾 Salva ou atualiza vínculo no Firestore
     await db
       .collection("vinculos")
       .doc(patreonId)
@@ -94,7 +89,7 @@ export async function POST(req: Request) {
           fullName,
           isSubscriber,
           loginUO: null,
-          patronStatus: membership?.attributes?.patron_status ?? null,
+          patronStatus: patronStatus ?? null,
           tier:
             membership?.relationships?.currently_entitled_tiers?.data?.[0]
               ?.id ?? null,
@@ -102,7 +97,7 @@ export async function POST(req: Request) {
         { merge: true }
       );
 
-    // 🚫 Se não for assinante
+    // 🚫 Se não for assinante ativo, retorna erro com redirecionamento
     if (!isSubscriber) {
       return NextResponse.json(
         {
@@ -114,10 +109,10 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Se for assinante ativo
+    // ✅ Usuário autenticado e ativo — cria cookie e retorna sucesso
     const response = NextResponse.json({
       success: true,
-      isSubscriber: true,
+      isSubscriber,
       patreonId,
       name: fullName,
     });
@@ -126,7 +121,7 @@ export async function POST(req: Request) {
       "Set-Cookie",
       serialize("patreon_id", patreonId, {
         path: "/",
-        maxAge: 60 * 60 * 24 * 30,
+        maxAge: 60 * 60 * 24 * 30, // 30 dias
         httpOnly: false,
         sameSite: "lax",
       })
@@ -139,7 +134,7 @@ export async function POST(req: Request) {
       {
         success: false,
         error: "Erro interno ao processar autenticação.",
-        details: err.message ?? "Erro desconhecido",
+        details: err.message || "Erro desconhecido",
       },
       { status: 500 }
     );
