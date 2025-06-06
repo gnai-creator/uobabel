@@ -61,7 +61,7 @@ export async function POST(req: Request) {
     console.log("👤 User data:", userData);
 
     const patreonId = userData.data?.id;
-    const fullName = userData.data?.attributes?.full_name;
+    const fullName = userData.data?.attributes?.full_name || "Patrono";
     const isSubscriber = userData.included?.some(
       (m: any) => m.attributes?.patron_status === "active_patron"
     );
@@ -73,14 +73,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // await db.collection("vinculos").doc(patreonId).set(
-    //   {
-    //     fullName,
-    //     isSubscriber,
-    //     loginUO: null,
-    //   },
-    //   { merge: true }
-    // );
+    await db.collection("vinculos").doc(patreonId).set(
+      {
+        fullName,
+        isSubscriber,
+        loginUO: null,
+      },
+      { merge: true }
+    );
 
     const response = NextResponse.json({
       success: true,
