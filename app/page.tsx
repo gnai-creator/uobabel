@@ -40,8 +40,9 @@ const Home: FC = () => {
           </p>
           <p>Baixe agora o client do servidor e comece a jogar.</p>
           <a href="./UO Babel Launcher.zip" className={styles.btn}>
-            Download Client
+            Download Client Launcher
           </a>
+          <br />
 
           <a
             href="https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabelReady.zip?alt=media&token=30d685e8-55fd-458d-a0cf-01987af868d3"
