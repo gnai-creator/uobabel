@@ -7,20 +7,24 @@ import logo from "../../public/logo.png";
 
 export default function LoginPage() {
   const clientId = process.env.NEXT_PUBLIC_PATREON_CLIENT_ID;
-  const redirectUri = "https://www.uobabel.com/patreon/callback";
-  const scope = "identity%20identity.memberships";
+  const redirectUri = encodeURIComponent(
+    "https://www.uobabel.com/patreon/callback"
+  );
+  const scope = encodeURIComponent("identity identity.memberships");
 
+  // ⛔ Aviso se clientId não estiver definido
   if (!clientId) {
     return (
       <div className={styles.container}>
         <p style={{ color: "red", textAlign: "center", marginTop: "2rem" }}>
           ⚠️ Erro: NEXT_PUBLIC_PATREON_CLIENT_ID não definido. Verifique seu
-          .env ou variáveis no Vercel.
+          .env.local ou variáveis no Vercel.
         </p>
       </div>
     );
   }
 
+  // 🔗 URL segura de login com OAuth
   const loginUrl = `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
 
   return (
