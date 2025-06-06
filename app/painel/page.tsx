@@ -5,16 +5,23 @@ import { useEffect, useState } from "react";
 export default function PainelPage() {
   const [user, setUser] = useState<any>(null);
   const [loginUO, setLoginUO] = useState("");
-  const [status, setStatus] = useState("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading"
+  );
 
   useEffect(() => {
     fetch("/api/patreon/me")
       .then((res) => res.json())
       .then((data) => {
-        setUser(data.user);
-        setLoginUO(data.user.loginUO || "");
-        setStatus("ready");
-      });
+        if (data.success && data.user) {
+          setUser(data.user);
+          setLoginUO(data.user.loginUO || "");
+          setStatus("ready");
+        } else {
+          setStatus("error");
+        }
+      })
+      .catch(() => setStatus("error"));
   }, []);
 
   const salvarLogin = async () => {
@@ -27,7 +34,9 @@ export default function PainelPage() {
     if (json.success) alert("Login vinculado com sucesso!");
   };
 
-  if (status === "loading") return <p>Carregando...</p>;
+  if (status === "loading") return <p>Carregando painel...</p>;
+  if (status === "error")
+    return <p>Erro ao carregar suas informações. Faça login novamente.</p>;
 
   return (
     <main style={{ padding: "2rem", textAlign: "center" }}>
@@ -36,7 +45,7 @@ export default function PainelPage() {
 
       <div style={{ marginTop: "2rem" }}>
         <h2>🧙 Vincular conta do Ultima Online</h2>
-        <p>Informe o nome de usuário que você usa no jogo:</p>
+        <p>Informe o nome de login que você usa no jogo:</p>
         <input
           type="text"
           value={loginUO}

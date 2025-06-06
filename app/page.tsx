@@ -26,6 +26,12 @@ const Home: FC = () => {
         <p className={styles.subtitle}>Servidor Survival Hardcore</p>
       </header>
 
+      <nav className={styles.nav}>
+        <Link href="/painel">Painel</Link>
+        <Link href="/terms">Termos</Link>
+        <Link href="/privacy">Privacidade</Link>
+      </nav>
+
       <main className={styles.main}>
         <section className={styles.intro}>
           <h2>🔥 O caos começou</h2>
