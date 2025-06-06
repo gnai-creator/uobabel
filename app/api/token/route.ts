@@ -94,7 +94,7 @@ export async function POST(req: Request) {
           fullName,
           isSubscriber,
           loginUO: null,
-          patronStatus,
+          patronStatus: membership?.attributes?.patron_status ?? null,
           tier:
             membership?.relationships?.currently_entitled_tiers?.data?.[0]
               ?.id ?? null,
