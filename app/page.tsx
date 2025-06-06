@@ -45,7 +45,7 @@ const Home: FC = () => {
           <br />
 
           <a
-            href="https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabelReady.zip?alt=media&token=30d685e8-55fd-458d-a0cf-01987af868d3"
+            href="https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabe-Zipl.zip?alt=media&token=6c1ba865-da81-4c90-94e4-0af9105e0be5"
             className={styles.btn}
           >
             Download Client Zip
