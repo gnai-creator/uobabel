@@ -2,12 +2,16 @@ import { NextResponse } from "next/server";
 import { serialize } from "cookie";
 import admin from "firebase-admin";
 
+// 🔐 Inicialização segura do Firebase
 if (!admin.apps.length) {
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+  if (!privateKey) throw new Error("FIREBASE_PRIVATE_KEY ausente ou inválido");
+
   admin.initializeApp({
     credential: admin.credential.cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      privateKey,
     }),
   });
 }
@@ -21,10 +25,12 @@ export async function POST(req: Request) {
 
     if (!code) {
       return NextResponse.json(
-        { success: false, error: "Código ausente." },
+        { success: false, error: "Código de autorização ausente." },
         { status: 400 }
       );
     }
+
+    console.log("🔁 Trocando código por token...");
 
     const tokenParams = new URLSearchParams({
       code,
@@ -41,70 +47,77 @@ export async function POST(req: Request) {
     });
 
     const tokenData = await tokenRes.json();
-    console.log("🎫 Token data:", tokenData);
+    console.log("🎫 Token recebido:", tokenData);
 
     if (!tokenData.access_token) {
       return NextResponse.json(
-        { success: false, error: "Token inválido." },
+        { success: false, error: "Token inválido ou expirado." },
         { status: 401 }
       );
     }
 
+    console.log("👤 Buscando dados do usuário...");
+
     const userRes = await fetch(
-      "https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields[member]=patron_status&fields[user]=full_name",
+      "https://www.patreon.com/api/oauth2/v2/identity?include=memberships.currently_entitled_tiers&fields[member]=patron_status&fields[user]=full_name",
       {
         headers: { Authorization: `Bearer ${tokenData.access_token}` },
       }
     );
 
     const userData = await userRes.json();
-    console.log("👤 User data:", userData);
+    console.log("🧾 Dados do Patreon:", JSON.stringify(userData, null, 2));
 
     const patreonId = userData.data?.id;
     const fullName = userData.data?.attributes?.full_name || "Patrono";
-    const isSubscriber = userData.included?.some(
-      (m: any) => m.attributes?.patron_status === "active_patron"
-    );
-
     const membership = userData.included?.find((m: any) => m.type === "member");
+
+    const patronStatus = membership?.attributes?.patron_status;
+    const isSubscriber =
+      patronStatus === "active_patron" &&
+      (membership?.relationships?.currently_entitled_tiers?.data?.length ?? 0) >
+        0;
 
     if (!patreonId) {
       return NextResponse.json(
-        { success: false, error: "ID do usuário não encontrado." },
+        { success: false, error: "ID do usuário não encontrado no Patreon." },
         { status: 400 }
       );
     }
 
+    // 💾 Armazena vínculo no Firestore
     await db
       .collection("vinculos")
       .doc(patreonId)
       .set(
         {
           fullName,
-          isSubscriber: !!isSubscriber,
+          isSubscriber,
           loginUO: null,
-          patronStatus: membership?.attributes?.patron_status,
+          patronStatus,
           tier:
             membership?.relationships?.currently_entitled_tiers?.data?.[0]
-              ?.id || null,
+              ?.id ?? null,
         },
         { merge: true }
       );
 
+    // 🚫 Se não for assinante
     if (!isSubscriber) {
       return NextResponse.json(
         {
           success: false,
           requiresSubscription: true,
-          error: "Usuário não é um assinante ativo.",
+          error: "Usuário não é um assinante ativo do Patreon.",
         },
         { status: 403 }
       );
     }
 
+    // ✅ Se for assinante ativo
     const response = NextResponse.json({
       success: true,
-      isSubscriber,
+      isSubscriber: true,
       patreonId,
       name: fullName,
     });
@@ -121,9 +134,13 @@ export async function POST(req: Request) {
 
     return response;
   } catch (err: any) {
-    console.error("❌ Erro interno no token.ts:", err);
+    console.error("❌ Erro no endpoint /api/token:", err);
     return NextResponse.json(
-      { success: false, error: "Erro interno ao processar autenticação." },
+      {
+        success: false,
+        error: "Erro interno ao processar autenticação.",
+        details: err.message ?? "Erro desconhecido",
+      },
       { status: 500 }
     );
   }
