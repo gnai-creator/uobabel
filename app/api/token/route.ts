@@ -73,14 +73,28 @@ export async function POST(req: Request) {
       );
     }
 
-    await db.collection("vinculos").doc(patreonId).set(
-      {
-        fullName,
-        isSubscriber,
-        loginUO: null,
-      },
-      { merge: true }
-    );
+    try {
+      const fullName = userData?.data?.attributes?.full_name || "Desconhecido";
+
+      if (!patreonId) {
+        throw new Error("patreonId ausente");
+      }
+
+      await db.collection("vinculos").doc(patreonId).set(
+        {
+          fullName: fullName,
+          isSubscriber: !!isSubscriber,
+          loginUO: null,
+        },
+        { merge: true }
+      );
+    } catch (error) {
+      console.error("Erro ao salvar no Firestore:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Erro ao salvar os dados do usuário no banco de dados.",
+      });
+    }
 
     const response = NextResponse.json({
       success: true,
