@@ -31,7 +31,7 @@ const Home: FC = () => {
           <p>
             Um dragão atacou a Torre de Babel. Um novo mundo nasce das cinzas.
           </p>
-          <a href="#" className={styles.btn}>
+          <a href="https://discord.gg/Hj2ZfzHWu5" className={styles.btn}>
             Entrar no Discord
           </a>
         </section>
