@@ -1,11 +1,11 @@
 // pages/index.tsx
-import React from "react";
-import Image from "next/image";
 import Head from "next/head";
+import Image from "next/image";
+import type { FC } from "react";
 import styles from "../styles/Home.module.css";
 import logo from "../public/logo.png";
 
-export default function Home(): React.ReactElement {
+const Home: FC = () => {
   return (
     <div className={styles.container}>
       <Head>
@@ -18,8 +18,8 @@ export default function Home(): React.ReactElement {
           src={logo}
           alt="UO Babel Logo"
           className={styles.logo}
-          width={300}
-          height={300}
+          width={180}
+          height={180}
         />
         <h1>UO Babel</h1>
         <p className={styles.subtitle}>Servidor Survival Hardcore</p>
@@ -42,4 +42,6 @@ export default function Home(): React.ReactElement {
       </footer>
     </div>
   );
-}
+};
+
+export default Home;
