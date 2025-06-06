@@ -11,8 +11,6 @@ export default function LoginPage() {
   const encodedRedirectUri = encodeURIComponent(rawRedirectUri);
   const scope = encodeURIComponent("identity identity.memberships");
 
-
-
   // ⛔ Aviso se clientId não estiver definido
   if (!clientId) {
     return (
@@ -26,7 +24,7 @@ export default function LoginPage() {
   }
 
   // 🔗 URL segura de login com OAuth
-  const loginUrl = `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodedRedirectUri}&scope=${scope}`;
+  const loginUrl = `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodedRedirectUri}&scope=${scope}&prompt=consent`;
 
   return (
     <div className={styles.container}>
