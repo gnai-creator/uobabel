@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
+import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
-function CallbackInner() {
+export default function CallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
@@ -12,6 +14,8 @@ function CallbackInner() {
     if (!code) return;
 
     const autenticar = async () => {
+      toast.loading("Verificando sua conta do Patreon...");
+
       try {
         const res = await fetch("/api/token", {
           method: "POST",
@@ -21,32 +25,37 @@ function CallbackInner() {
 
         const data = await res.json();
 
+        toast.dismiss();
+
         if (res.status === 403 && data?.requiresSubscription) {
-          alert(
-            "Você vinculou sua conta, mas ainda não é assinante. Por favor, apoie para desbloquear o conteúdo premium."
+          toast.error(
+            "Você não é assinante ainda. Redirecionando para o Patreon..."
           );
-          window.location.href = "https://www.patreon.com/uobabel";
+          setTimeout(() => {
+            window.location.href = "https://www.patreon.com/uobabel";
+          }, 3000);
         } else if (data.success) {
+          toast.success("✅ Conta vinculada com sucesso!");
           router.push("/painel");
         } else {
-          alert("Erro: " + (data.error || "Erro inesperado."));
+          toast.error("❌ " + (data.error || "Erro inesperado."));
         }
       } catch (err) {
+        toast.dismiss();
+        toast.error("Erro de rede ao autenticar. Tente novamente.");
         console.error("Erro fatal no callback:", err);
-        alert("Falha ao verificar sua conta do Patreon.");
       }
     };
 
     autenticar();
   }, [code, router]);
 
-  return <p>Verificando sua conta do Patreon...</p>;
-}
-
-export default function CallbackPage() {
   return (
-    <Suspense fallback={<p>Carregando...</p>}>
-      <CallbackInner />
-    </Suspense>
+    <div className="flex flex-col items-center justify-center h-screen">
+      <Loader2 className="h-10 w-10 animate-spin text-blue-600 mb-4" />
+      <p className="text-lg text-gray-700">
+        Verificando sua conta do Patreon...
+      </p>
+    </div>
   );
 }
