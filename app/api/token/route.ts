@@ -66,35 +66,22 @@ export async function POST(req: Request) {
       (m: any) => m.attributes?.patron_status === "active_patron"
     );
 
-    if (!patreonId || !fullName) {
+    if (!patreonId) {
       return NextResponse.json(
-        { success: false, error: "Dados incompletos do usuário." },
+        { success: false, error: "ID do usuário não encontrado." },
         { status: 400 }
       );
     }
 
-    try {
-      const fullName = userData?.data?.attributes?.full_name || "Desconhecido";
-
-      if (!patreonId) {
-        throw new Error("patreonId ausente");
-      }
-
-      await db.collection("vinculos").doc(patreonId).set(
-        {
-          fullName: fullName,
-          isSubscriber: !!isSubscriber,
-          loginUO: null,
-        },
-        { merge: true }
-      );
-    } catch (error) {
-      console.error("Erro ao salvar no Firestore:", error);
-      return res.status(500).json({
-        success: false,
-        error: "Erro ao salvar os dados do usuário no banco de dados.",
-      });
-    }
+    // ✅ Corrigido: usar a variável `fullName` já existente
+    await db.collection("vinculos").doc(patreonId).set(
+      {
+        fullName,
+        isSubscriber: !!isSubscriber,
+        loginUO: null,
+      },
+      { merge: true }
+    );
 
     const response = NextResponse.json({
       success: true,
