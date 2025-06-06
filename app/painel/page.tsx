@@ -92,7 +92,7 @@ export default function PainelPage() {
           className={`px-6 py-2 rounded text-white ${
             saving || !loginUO.trim()
               ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
+              : "bg-blue-600 hover:bg-red-700"
           }`}
         >
           {saving ? "Salvando..." : "Salvar login do UO"}

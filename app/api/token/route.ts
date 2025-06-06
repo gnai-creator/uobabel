@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { serialize } from "cookie";
+import { db } from "@/lib/firestore";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -44,30 +45,41 @@ export async function POST(req: Request) {
   const userData = await userRes.json();
 
   const patreonId = userData.data?.id;
+  const fullName = userData.data?.attributes?.full_name;
   const isSubscriber = userData.included?.some(
     (m: any) => m.attributes?.patron_status === "active_patron"
   );
 
-  if (!patreonId) {
+  if (!patreonId || !fullName) {
     return NextResponse.json(
-      { success: false, error: "ID do usuário não encontrado." },
+      { success: false, error: "Dados incompletos do usuário." },
       { status: 400 }
     );
   }
 
-  // Cria cookie no formato Set-Cookie manualmente
+  // Salvar no Firestore
+  await db.collection("vinculos").doc(patreonId).set(
+    {
+      fullName,
+      isSubscriber,
+      loginUO: null, // ainda não vinculado
+    },
+    { merge: true }
+  );
+
+  // Criar cookie
   const response = NextResponse.json({
     success: true,
     isSubscriber,
     patreonId,
-    name: userData.data.attributes.full_name,
+    name: fullName,
   });
 
   response.headers.set(
     "Set-Cookie",
     serialize("patreon_id", patreonId, {
       path: "/",
-      maxAge: 60 * 60 * 24 * 30, // 30 dias
+      maxAge: 60 * 60 * 24 * 30,
       httpOnly: false,
       sameSite: "lax",
     })
