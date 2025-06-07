@@ -44,14 +44,20 @@ export async function POST(req: Request) {
       body: tokenParams.toString(),
     });
 
-    const tokenData = await tokenRes.json();
-
-    if (!tokenData.access_token) {
+    if (!tokenRes.ok) {
+      const error = await tokenRes.text();
+      console.error("Erro ao trocar código por token:", error);
       return NextResponse.json(
-        { success: false, error: "Token inválido ou expirado." },
-        { status: 401 }
+        {
+          success: false,
+          error: "Erro ao obter token do Patreon",
+          details: error,
+        },
+        { status: tokenRes.status }
       );
     }
+
+    const tokenData = await tokenRes.json();
 
     // 👤 Busca os dados do usuário e da assinatura
     const userRes = await fetch(
@@ -70,7 +76,8 @@ export async function POST(req: Request) {
     const patronStatus = membership?.attributes?.patron_status;
     const isSubscriber =
       patronStatus === "active_patron" &&
-      (membership?.relationships?.currently_entitled_tiers?.data?.length ?? 0) > 0;
+      (membership?.relationships?.currently_entitled_tiers?.data?.length ?? 0) >
+        0;
 
     if (!patreonId) {
       return NextResponse.json(
