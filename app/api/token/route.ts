@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { serialize } from "cookie";
 import admin from "firebase-admin";
 
+// 🔐 Inicialização do Firebase Admin
 if (!admin.apps.length) {
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
 
@@ -34,9 +35,6 @@ export async function POST(req: Request) {
     }
 
     console.log("✅ Código recebido:", code);
-    console.log("🔍 Verificando variáveis de ambiente:");
-    console.log("PATREON_CLIENT_ID =", !!process.env.PATREON_CLIENT_ID);
-    console.log("PATREON_CLIENT_SECRET =", !!process.env.PATREON_CLIENT_SECRET);
 
     const tokenParams = new URLSearchParams({
       code,
@@ -55,31 +53,81 @@ export async function POST(req: Request) {
       body: tokenParams.toString(),
     });
 
-    const raw = await tokenRes.text();
-    console.log("🎯 Resposta Patreon status:", tokenRes.status);
-    console.log("📦 Corpo:", raw);
-
     if (!tokenRes.ok) {
+      const errorText = await tokenRes.text();
+      console.error(
+        "❌ Falha ao obter token Patreon:",
+        tokenRes.status,
+        errorText
+      );
       return NextResponse.json(
         {
           success: false,
           error: "Erro ao obter token do Patreon",
-          details: raw,
+          details: errorText,
         },
         { status: tokenRes.status }
       );
     }
 
-    const tokenData = JSON.parse(raw);
+    const tokenData = await tokenRes.json();
 
     if (!tokenData.access_token) {
       return NextResponse.json(
-        { success: false, error: "Token inválido ou expirado" },
+        { success: false, error: "Token inválido ou expirado." },
         { status: 401 }
       );
     }
 
-    return NextResponse.json({ success: true, token: tokenData.access_token });
+    const userRes = await fetch(
+      "https://www.patreon.com/api/oauth2/v2/identity" +
+        "?include=memberships.currently_entitled_tiers" +
+        "&fields[member]=patron_status" +
+        "&fields[user]=full_name",
+      {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+          "User-Agent": "uobabel.com - Painel OAuth",
+        },
+      }
+    );
+
+    const userData = await userRes.json();
+    const patreonId = userData.data.id;
+    const fullName = userData.data.attributes.full_name ?? "Patrono";
+
+    const hasSubscription =
+      userData.included?.some(
+        (item: any) =>
+          item.type === "member" &&
+          item.attributes?.patron_status === "active_patron"
+      ) ?? false;
+
+    await db.collection("vinculos").doc(patreonId).set(
+      {
+        fullName,
+        isSubscriber: hasSubscription,
+        updatedAt: Date.now(),
+      },
+      { merge: true }
+    );
+
+    // ✅ Definir cookie
+    const cookie = serialize("patreon_id", patreonId, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 dias
+      httpOnly: true,
+      sameSite: "lax",
+      secure: true,
+    });
+
+    return new NextResponse(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: {
+        "Set-Cookie": cookie,
+        "Content-Type": "application/json",
+      },
+    });
   } catch (err: any) {
     console.error("🔥 Erro inesperado:", err);
     return NextResponse.json(
