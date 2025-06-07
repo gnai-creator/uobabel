@@ -19,6 +19,16 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 export async function POST(req: Request) {
+  if (!process.env.PATREON_CLIENT_ID || !process.env.NEXT_PUBLIC_PATREON_CLIENT_SECRET) {
+    console.error("❌ Variáveis de ambiente ausentes:");
+    console.error("PATREON_CLIENT_ID =", process.env.NEXT_PUBLIC_PATREON_CLIENT_ID);
+    console.error("PATREON_CLIENT_SECRET =", process.env.NEXT_PUBLIC_PATREON_CLIENT_SECRET);
+    return NextResponse.json(
+      { success: false, error: "Configuração do servidor incompleta" },
+      { status: 403 }
+    );
+  }
+
   try {
     const { code } = await req.json();
 
@@ -33,8 +43,8 @@ export async function POST(req: Request) {
     const tokenParams = new URLSearchParams({
       code,
       grant_type: "authorization_code",
-      client_id: process.env.PATREON_CLIENT_ID!,
-      client_secret: process.env.PATREON_CLIENT_SECRET!,
+      client_id: process.env.NEXT_PUBLIC_PATREON_CLIENT_ID!,
+      client_secret: process.env.NEXT_PUBLIC_PATREON_CLIENT_SECRET!,
       redirect_uri: "https://www.uobabel.com/patreon/callback",
     });
 
