@@ -28,8 +28,10 @@ function CallbackInner() {
         setCarregando(false);
 
         if (res.status === 403 && data?.requiresSubscription) {
+          alert("Você precisa assinar o Patreon para continuar.");
           window.location.href = "https://www.patreon.com/uobabel";
-        } else if (data.success) {
+        }
+         else if (data.success) {
           router.push("/painel");
         } else {
           setErro(data.error || "Erro inesperado");

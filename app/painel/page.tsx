@@ -16,7 +16,11 @@ export default function PainelPage() {
 
   useEffect(() => {
     fetch("/api/patreon/me")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Erro ao buscar usuário");
+        return res.json();
+      })
+
       .then((data) => {
         if (data.success && data.user) {
           setUser(data.user);

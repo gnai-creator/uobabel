@@ -65,8 +65,12 @@ const Home: FC = () => {
         <section className={styles.intro}>
           <h2> Quer acesso Ilimitado no servidor?</h2>
           <p>Assine o Patreon para ter acesso a funcionalidades exclusivas.</p>
+          <p>
+            Se estiver problemas para acessar o painel, Assine o Patreon e
+            clique novamente neste botão.
+          </p>
           <a href="/login" className={styles.btn}>
-            Entrar com Patreon
+            Entrar Painel/Patreon
           </a>
         </section>
       </main>
