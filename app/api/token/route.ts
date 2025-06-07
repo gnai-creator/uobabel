@@ -19,10 +19,19 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 export async function POST(req: Request) {
-  if (!process.env.PATREON_CLIENT_ID || !process.env.NEXT_PUBLIC_PATREON_CLIENT_SECRET) {
+  if (
+    !process.env.NEXT_PUBLIC_PATREON_CLIENT_ID ||
+    !process.env.NEXT_PUBLIC_PATREON_CLIENT_SECRET
+  ) {
     console.error("❌ Variáveis de ambiente ausentes:");
-    console.error("PATREON_CLIENT_ID =", process.env.NEXT_PUBLIC_PATREON_CLIENT_ID);
-    console.error("PATREON_CLIENT_SECRET =", process.env.NEXT_PUBLIC_PATREON_CLIENT_SECRET);
+    console.error(
+      "PATREON_CLIENT_ID =",
+      process.env.NEXT_PUBLIC_PATREON_CLIENT_ID
+    );
+    console.error(
+      "PATREON_CLIENT_SECRET =",
+      process.env.NEXT_PUBLIC_PATREON_CLIENT_SECRET
+    );
     return NextResponse.json(
       { success: false, error: "Configuração do servidor incompleta" },
       { status: 403 }
@@ -50,7 +59,10 @@ export async function POST(req: Request) {
 
     const tokenRes = await fetch("https://www.patreon.com/api/oauth2/token", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "uobabel.com - Painel OAuth",
+      },
       body: tokenParams.toString(),
     });
 
