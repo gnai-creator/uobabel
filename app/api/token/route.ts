@@ -70,8 +70,7 @@ export async function POST(req: Request) {
     const patronStatus = membership?.attributes?.patron_status;
     const isSubscriber =
       patronStatus === "active_patron" &&
-      (membership?.relationships?.currently_entitled_tiers?.data?.length ?? 0) >
-        0;
+      (membership?.relationships?.currently_entitled_tiers?.data?.length ?? 0) > 0;
 
     if (!patreonId) {
       return NextResponse.json(
@@ -80,22 +79,28 @@ export async function POST(req: Request) {
       );
     }
 
-    // 💾 Salva ou atualiza vínculo no Firestore
-    await db
-      .collection("vinculos")
-      .doc(patreonId)
-      .set(
-        {
-          fullName,
-          isSubscriber,
-          loginUO: null,
-          patronStatus: patronStatus ?? null,
-          tier:
-            membership?.relationships?.currently_entitled_tiers?.data?.[0]
-              ?.id ?? null,
-        },
-        { merge: true }
-      );
+    // 🔄 Verifica se o documento já existe
+    const docRef = db.collection("vinculos").doc(patreonId);
+    const existingDoc = await docRef.get();
+
+    const existingLoginUO = existingDoc.exists
+      ? existingDoc.data()?.loginUO ?? null
+      : null;
+
+    // 💾 Atualiza ou cria com loginUO preservado
+    await docRef.set(
+      {
+        fullName,
+        isSubscriber,
+        loginUO: existingLoginUO,
+        patronStatus: patronStatus ?? null,
+        tier:
+          membership?.relationships?.currently_entitled_tiers?.data?.[0]?.id ??
+          null,
+        updatedAt: new Date().toISOString(),
+      },
+      { merge: true }
+    );
 
     // 🚫 Se não for assinante ativo, retorna erro com redirecionamento
     if (!isSubscriber) {
