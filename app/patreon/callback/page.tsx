@@ -29,7 +29,8 @@ function CallbackInner() {
 
         if (res.status === 403 && data?.requiresSubscription) {
           alert("Você precisa assinar o Patreon para continuar.");
-          window.location.href = "https://www.patreon.com/uobabel";
+          window.location.href = "https://www.patreon.com/uobabel/membership?redirect_uri=https://www.uobabel.com/patreon/callback";
+
         }
          else if (data.success) {
           router.push("/painel");
