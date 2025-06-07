@@ -6,9 +6,9 @@ import styles from "../../styles/Home.module.css";
 import logo from "../../public/logo.png";
 import { useEffect } from "react";
 
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 export default function LoginPage() {
-  const clientId = process.env.NEXT_PUBLIC_PATREON_CLIENT_ID;
+  const clientId = process.env.PATREON_CLIENT_ID;
   const rawRedirectUri = "https://www.uobabel.com/patreon/callback";
   const encodedRedirectUri = encodeURIComponent(rawRedirectUri);
   const scope = encodeURIComponent("identity identity.memberships");
@@ -36,8 +36,8 @@ export default function LoginPage() {
     return (
       <div className={styles.container}>
         <p style={{ color: "red", textAlign: "center", marginTop: "2rem" }}>
-          ⚠️ Erro: NEXT_PUBLIC_PATREON_CLIENT_ID não definido. Verifique seu
-          .env.local ou variáveis no Vercel.
+          ⚠️ Erro: PATREON_CLIENT_ID não definido. Verifique seu .env.local ou
+          variáveis no Vercel.
         </p>
       </div>
     );
