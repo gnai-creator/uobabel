@@ -4,13 +4,33 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../../styles/Home.module.css";
 import logo from "../../public/logo.png";
+import { useEffect } from "react";
 
+import { useRouter } from "next/navigation"
 export default function LoginPage() {
   const clientId = process.env.NEXT_PUBLIC_PATREON_CLIENT_ID;
   const rawRedirectUri = "https://www.uobabel.com/patreon/callback";
   const encodedRedirectUri = encodeURIComponent(rawRedirectUri);
   const scope = encodeURIComponent("identity identity.memberships");
+  const router = useRouter();
 
+  useEffect(() => {
+    async function verificarStatus() {
+      try {
+        const res = await fetch("/api/patreon/me");
+        const data = await res.json();
+
+        if (data.success && data.user?.isSubscriber) {
+          // Redireciona automaticamente se já for assinante
+          router.push("/painel");
+        }
+      } catch (err) {
+        console.warn("Falha ao verificar status do Patreon:", err);
+      }
+    }
+
+    verificarStatus();
+  }, [router]);
   // ⛔ Aviso se clientId não estiver definido
   if (!clientId) {
     return (

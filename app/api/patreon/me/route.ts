@@ -23,7 +23,7 @@ export async function GET() {
         patreonId,
         loginUO: data?.loginUO || null,
         fullName: data?.fullName || "Patrono",
-        isSubscriber: data?.isSubscriber ?? true,
+        isSubscriber: Boolean(data?.isSubscriber),
       },
     });
   } catch (error) {
