@@ -15,7 +15,14 @@ export async function GET() {
 
   try {
     const userDoc = await db.collection("vinculos").doc(patreonId).get();
-    const data = userDoc.exists ? userDoc.data() : {};
+    const data = userDoc.exists ? userDoc.data() : null;
+
+    if (!data) {
+      return NextResponse.json(
+        { success: false, error: "Usuário não encontrado." },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
