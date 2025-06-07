@@ -96,12 +96,16 @@ export async function POST(req: Request) {
     const patreonId = userData.data.id;
     const fullName = userData.data.attributes.full_name ?? "Patrono";
 
+    const isCreator = patreonId === process.env.PATREON_OWNER_ID;
+
     const hasSubscription =
-      userData.included?.some(
+      isCreator ||
+      (userData.included?.some(
         (item: any) =>
           item.type === "member" &&
           item.attributes?.patron_status === "active_patron"
-      ) ?? false;
+      ) ??
+        false);
 
     await db.collection("vinculos").doc(patreonId).set(
       {
