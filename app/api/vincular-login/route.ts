@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, error: "Login ausente" }, { status: 400 });
   }
 
-  const patreonId = cookies().get("patreon_id")?.value;
+  const patreonId = (await cookies()).get("patreon_id")?.value;
 
   if (!patreonId) {
     return NextResponse.json({ success: false, error: "Usuário não autenticado" }, { status: 401 });
