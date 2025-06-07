@@ -4,13 +4,17 @@ import admin from "firebase-admin";
 
 // 🔐 Inicialização segura do Firebase Admin
 if (!admin.apps.length) {
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
-  if (!privateKey) throw new Error("FIREBASE_PRIVATE_KEY ausente ou inválido");
+  const privateKey = process.env.NEXT_PUBLIC_FIREBASE_PRIVATE_KEY?.replace(
+    /\\n/g,
+    "\n"
+  );
+  if (!privateKey)
+    throw new Error("NEXT_PUBLIC_FIREBASE_PRIVATE_KEY ausente ou inválido");
 
   admin.initializeApp({
     credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      clientEmail: process.env.NEXT_PUBLIC_FIREBASE_CLIENT_EMAIL,
       privateKey,
     }),
   });
