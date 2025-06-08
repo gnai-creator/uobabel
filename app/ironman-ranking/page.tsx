@@ -48,17 +48,23 @@ function formatSurvivalTime(ts: string) {
 
 async function getBestRuns(): Promise<IronmanRankingEntry[]> {
   const snapshot = await db.collection("ironmanRanking").get();
-  const allRuns = snapshot.docs.map((doc) => doc.data() as IronmanRankingEntry);
+  const allRuns = snapshot.docs.map(
+    (doc: FirebaseFirestore.QueryDocumentSnapshot) =>
+      doc.data() as IronmanRankingEntry
+  );
 
   // Agrupa por player, pega a run de maior score
   const bestByPlayer = Object.values(
-    allRuns.reduce((acc, run) => {
-      if (!acc[run.PlayerName] || run.Score > acc[run.PlayerName].Score) {
-        acc[run.PlayerName] = run;
-      }
-      return acc;
-    }, {} as Record<string, IronmanRankingEntry>)
-  );
+    allRuns.reduce(
+      (acc: Record<string, IronmanRankingEntry>, run: IronmanRankingEntry) => {
+        if (!acc[run.PlayerName] || run.Score > acc[run.PlayerName].Score) {
+          acc[run.PlayerName] = run;
+        }
+        return acc;
+      },
+      {} as Record<string, IronmanRankingEntry>
+    )
+  ) as IronmanRankingEntry[];
 
   // Ordena pelo Score decrescente
   return bestByPlayer.sort((a, b) => b.Score - a.Score);
