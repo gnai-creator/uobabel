@@ -1,4 +1,4 @@
-import { db } from "@/lib/firestoreAdmin";
+import { db } from "@/lib/firestore";
 
 type IronmanRankingEntry = {
   PlayerName: string;
