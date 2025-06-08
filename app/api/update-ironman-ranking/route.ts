@@ -5,7 +5,7 @@ const SECRET_KEY = process.env.IRONMAN_SECRET_KEY;
 
 export async function POST(req: NextRequest) {
   // 1. Checa o header customizado
-  const serverKey = req.headers.get("x-server-key");
+  const serverKey = req.headers.get("X-Server-Key");
   if (!serverKey || serverKey !== SECRET_KEY) {
     return NextResponse.json(
       { success: false, error: "Acesso negado." },
