@@ -1,4 +1,5 @@
-import { db } from "@/lib/firestore";
+"use client";
+import React, { useEffect, useState } from "react";
 
 type IronmanRankingEntry = {
   PlayerName: string;
@@ -46,32 +47,16 @@ function formatSurvivalTime(ts: string) {
   return result.trim();
 }
 
-async function getBestRuns(): Promise<IronmanRankingEntry[]> {
-  const snapshot = await db.collection("ironmanRanking").get();
-  const allRuns = snapshot.docs.map(
-    (doc: FirebaseFirestore.QueryDocumentSnapshot) =>
-      doc.data() as IronmanRankingEntry
-  );
+export default function IronmanRankingPage() {
+  const [ranking, setRanking] = useState<IronmanRankingEntry[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Agrupa por player, pega a run de maior score
-  const bestByPlayer = Object.values(
-    allRuns.reduce(
-      (acc: Record<string, IronmanRankingEntry>, run: IronmanRankingEntry) => {
-        if (!acc[run.PlayerName] || run.Score > acc[run.PlayerName].Score) {
-          acc[run.PlayerName] = run;
-        }
-        return acc;
-      },
-      {} as Record<string, IronmanRankingEntry>
-    )
-  ) as IronmanRankingEntry[];
-
-  // Ordena pelo Score decrescente
-  return bestByPlayer.sort((a, b) => b.Score - a.Score);
-}
-
-export default async function IronmanRankingPage() {
-  const ranking = await getBestRuns();
+  useEffect(() => {
+    fetch("/api/ironman-ranking")
+      .then((res) => res.json())
+      .then((data) => setRanking(data))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <main className="max-w-4xl mx-auto p-6">
@@ -92,34 +77,48 @@ export default async function IronmanRankingPage() {
             </tr>
           </thead>
           <tbody>
-            {ranking.map((p, i) => (
-              <tr
-                key={i}
-                className={
-                  i === 0
-                    ? "bg-yellow-900/80 text-yellow-200 font-bold"
-                    : i % 2 === 0
-                    ? "bg-zinc-800"
-                    : "bg-zinc-900"
-                }
-              >
-                <td className="px-4 py-2 text-center">{i + 1}</td>
-                <td className="px-4 py-2">{p.PlayerName}</td>
-                <td className="px-4 py-2">{p.Score}</td>
-                <td className="px-4 py-2">
-                  {formatSurvivalTime(p.SurvivalTime)}
-                </td>
-                <td className="px-4 py-2">{p.PvPKills}</td>
-                <td className="px-4 py-2">{p.PvMKills}</td>
-                <td className="px-4 py-2">
-                  {p.IsActive ? (
-                    <span className="text-green-400">🟢 Vivo</span>
-                  ) : (
-                    <span className="text-gray-400">⚰️ Morto</span>
-                  )}
+            {loading ? (
+              <tr>
+                <td colSpan={7} className="text-center py-6">
+                  Carregando ranking...
                 </td>
               </tr>
-            ))}
+            ) : ranking.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="text-center py-6">
+                  Nenhum jogador no ranking ainda!
+                </td>
+              </tr>
+            ) : (
+              ranking.map((p, i) => (
+                <tr
+                  key={i}
+                  className={
+                    i === 0
+                      ? "bg-yellow-900/80 text-yellow-200 font-bold"
+                      : i % 2 === 0
+                      ? "bg-zinc-800"
+                      : "bg-zinc-900"
+                  }
+                >
+                  <td className="px-4 py-2 text-center">{i + 1}</td>
+                  <td className="px-4 py-2">{p.PlayerName}</td>
+                  <td className="px-4 py-2">{p.Score}</td>
+                  <td className="px-4 py-2">
+                    {formatSurvivalTime(p.SurvivalTime)}
+                  </td>
+                  <td className="px-4 py-2">{p.PvPKills}</td>
+                  <td className="px-4 py-2">{p.PvMKills}</td>
+                  <td className="px-4 py-2">
+                    {p.IsActive ? (
+                      <span className="text-green-400">🟢 Vivo</span>
+                    ) : (
+                      <span className="text-gray-400">⚰️ Morto</span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
