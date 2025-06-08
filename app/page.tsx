@@ -28,6 +28,7 @@ const Home: FC = () => {
 
       <nav className={styles.nav}>
         <Link href="/painel">Painel</Link>
+        <Link href="/ironman-ranking">Ironman Ranking</Link>
         <Link href="/terms">Termos</Link>
         <Link href="/privacy">Privacidade</Link>
       </nav>
