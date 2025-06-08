@@ -1,7 +1,4 @@
-// app/ironman-ranking/page.tsx
-
-import { db } from "@/lib/firestore";
-import { formatSurvivalTime } from "@/lib/time";
+import { db } from "@/lib/firestoreAdmin";
 
 type IronmanRankingEntry = {
   PlayerName: string;
@@ -20,32 +17,55 @@ type IronmanRankingEntry = {
   Timestamp: string;
 };
 
-async function getLatestFinishedRuns(): Promise<IronmanRankingEntry[]> {
-    const snapshot = await db.collection('ironmanRanking').get();
-    const allRuns = snapshot.docs.map(doc => doc.data() as IronmanRankingEntry);
-  
-    // 1. Só runs finalizadas
-    const finishedRuns = allRuns.filter(run => run.IsActive === false);
-  
-    // 2. Agrupa por player, pegando a run com maior timestamp
-    const latestByPlayer = Object.values(
-      finishedRuns.reduce((acc, run) => {
-        if (
-          !acc[run.PlayerName] ||
-          new Date(run.Timestamp) > new Date(acc[run.PlayerName].Timestamp)
-        ) {
-          acc[run.PlayerName] = run;
-        }
-        return acc;
-      }, {} as Record<string, IronmanRankingEntry>)
-    );
-  
-    // 3. Ordena por Score decrescente
-    return latestByPlayer.sort((a, b) => b.Score - a.Score);
+function formatSurvivalTime(ts: string) {
+  if (!ts) return "-";
+  const [days, rest] = ts.split(".");
+  let d = 0,
+    h = 0,
+    m = 0,
+    s = 0;
+  if (rest) {
+    d = parseInt(days, 10);
+    const [hms] = rest.split(".");
+    const [hh, mm, ss] = hms.split(":").map(Number);
+    h = hh || 0;
+    m = mm || 0;
+    s = ss || 0;
+  } else {
+    const [hms] = ts.split(".");
+    const [hh, mm, ss] = hms.split(":").map(Number);
+    h = hh || 0;
+    m = mm || 0;
+    s = ss || 0;
   }
+  let result = "";
+  if (d > 0) result += `${d}d `;
+  result += `${h.toString().padStart(2, "0")}:`;
+  result += `${m.toString().padStart(2, "0")}:`;
+  result += `${s.toString().padStart(2, "0")}`;
+  return result.trim();
+}
+
+async function getBestRuns(): Promise<IronmanRankingEntry[]> {
+  const snapshot = await db.collection("ironmanRanking").get();
+  const allRuns = snapshot.docs.map((doc) => doc.data() as IronmanRankingEntry);
+
+  // Agrupa por player, pega a run de maior score
+  const bestByPlayer = Object.values(
+    allRuns.reduce((acc, run) => {
+      if (!acc[run.PlayerName] || run.Score > acc[run.PlayerName].Score) {
+        acc[run.PlayerName] = run;
+      }
+      return acc;
+    }, {} as Record<string, IronmanRankingEntry>)
+  );
+
+  // Ordena pelo Score decrescente
+  return bestByPlayer.sort((a, b) => b.Score - a.Score);
+}
 
 export default async function IronmanRankingPage() {
-  const ranking = await getLatestFinishedRuns();
+  const ranking = await getBestRuns();
 
   return (
     <main className="max-w-4xl mx-auto p-6">
