@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   // ... resto do seu código ...
   const data = await req.json();
 
-  if (!data?.PlayerName || !data?.Score) {
+  if (!data?.PlayerName || data?.Score === undefined || data?.Score === null) {
     return NextResponse.json(
       { success: false, error: "Dados incompletos." },
       { status: 400 }
