@@ -20,31 +20,26 @@ type IronmanRankingEntry = {
 
 function formatSurvivalTime(ts: string) {
   if (!ts) return "-";
-  const [days, rest] = ts.split(".");
-  let d = 0,
-    h = 0,
-    m = 0,
-    s = 0;
-  if (rest) {
-    d = parseInt(days, 10);
-    const [hms] = rest.split(".");
-    const [hh, mm, ss] = hms.split(":").map(Number);
-    h = hh || 0;
-    m = mm || 0;
-    s = ss || 0;
+  // Aceita TimeSpan .ToString() do C# (d.hh:mm:ss ou hh:mm:ss)
+  const parts = ts.split(".");
+  let days = 0,
+    hms = "";
+
+  if (parts.length === 2) {
+    days = parseInt(parts[0], 10);
+    hms = parts[1];
   } else {
-    const [hms] = ts.split(".");
-    const [hh, mm, ss] = hms.split(":").map(Number);
-    h = hh || 0;
-    m = mm || 0;
-    s = ss || 0;
+    hms = parts[0];
   }
-  let result = "";
-  if (d > 0) result += `${d}d `;
-  result += `${h.toString().padStart(2, "0")}:`;
-  result += `${m.toString().padStart(2, "0")}:`;
-  result += `${s.toString().padStart(2, "0")}`;
-  return result.trim();
+
+  const [h, m, s] = hms.split(":").map((x) => parseInt(x, 10) || 0);
+
+  let res = "";
+  if (days > 0) res += `${days}d `;
+  res += `${h.toString().padStart(2, "0")}:`;
+  res += `${m.toString().padStart(2, "0")}:`;
+  res += `${s.toString().padStart(2, "0")}`;
+  return res.trim();
 }
 
 export default function IronmanRankingPage() {
