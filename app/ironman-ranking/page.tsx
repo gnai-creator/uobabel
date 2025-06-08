@@ -19,34 +19,34 @@ type IronmanRankingEntry = {
 };
 
 function formatSurvivalTime(ts: string | undefined | null): string {
-  if (!ts || typeof ts !== "string") return "-";
-  // Remove espaços acidentais
+  if (!ts || typeof ts !== "string" || !ts.trim()) return "00:00:00";
   ts = ts.trim();
-  if (!ts) return "-";
 
-  // Exemplo válido: "00:50:46" ou "1.00:50:46" ou "3.04:03:02"
-  const parts = ts.split(".");
   let days = 0,
-    hms = "";
-
-  if (parts.length === 2) {
-    days = parseInt(parts[0], 10) || 0;
-    hms = parts[1];
+    h = 0,
+    m = 0,
+    s = 0;
+  if (ts.includes(".")) {
+    // pode ser "d.hh:mm:ss" ou "hh:mm:ss.fff"
+    const [first, second] = ts.split(".");
+    if (second && first.includes(":") && !first.match(/^[0-9]+$/)) {
+      // "hh:mm:ss.fff"
+      [h, m, s] = first.split(":").map((x) => parseInt(x, 10) || 0);
+    } else if (second && first.match(/^[0-9]+$/)) {
+      // "d.hh:mm:ss"
+      days = parseInt(first, 10) || 0;
+      [h, m, s] = second.split(":").map((x) => parseInt(x, 10) || 0);
+    }
   } else {
-    hms = parts[0];
+    [h, m, s] = ts.split(":").map((x) => parseInt(x, 10) || 0);
   }
-
-  const [h, m, s] = hms.split(":").map((x) => parseInt(x, 10) || 0);
-
-  // Se nada veio válido, retorna "-"
-  if (isNaN(h) || isNaN(m) || isNaN(s)) return "-";
 
   let res = "";
   if (days > 0) res += `${days}d `;
   res += `${h.toString().padStart(2, "0")}:`;
   res += `${m.toString().padStart(2, "0")}:`;
   res += `${s.toString().padStart(2, "0")}`;
-  return res.trim();
+  return res;
 }
 
 export default function IronmanRankingPage() {
