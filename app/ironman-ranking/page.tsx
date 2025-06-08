@@ -18,21 +18,28 @@ type IronmanRankingEntry = {
   Timestamp: string;
 };
 
-function formatSurvivalTime(ts: string) {
+function formatSurvivalTime(ts: string | undefined | null): string {
+  if (!ts || typeof ts !== "string") return "-";
+  // Remove espaços acidentais
+  ts = ts.trim();
   if (!ts) return "-";
-  // Aceita TimeSpan .ToString() do C# (d.hh:mm:ss ou hh:mm:ss)
+
+  // Exemplo válido: "00:50:46" ou "1.00:50:46" ou "3.04:03:02"
   const parts = ts.split(".");
   let days = 0,
     hms = "";
 
   if (parts.length === 2) {
-    days = parseInt(parts[0], 10);
+    days = parseInt(parts[0], 10) || 0;
     hms = parts[1];
   } else {
     hms = parts[0];
   }
 
   const [h, m, s] = hms.split(":").map((x) => parseInt(x, 10) || 0);
+
+  // Se nada veio válido, retorna "-"
+  if (isNaN(h) || isNaN(m) || isNaN(s)) return "-";
 
   let res = "";
   if (days > 0) res += `${days}d `;
