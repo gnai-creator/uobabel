@@ -20,18 +20,32 @@ type IronmanRankingEntry = {
   Timestamp: string;
 };
 
-async function getRanking(): Promise<IronmanRankingEntry[]> {
-  const snapshot = await db
-    .collection("ironmanRanking")
-    .orderBy("Score", "desc")
-    .limit(100)
-    .get();
-
-  return snapshot.docs.map((doc) => doc.data() as IronmanRankingEntry);
-}
+async function getLatestFinishedRuns(): Promise<IronmanRankingEntry[]> {
+    const snapshot = await db.collection('ironmanRanking').get();
+    const allRuns = snapshot.docs.map(doc => doc.data() as IronmanRankingEntry);
+  
+    // 1. Só runs finalizadas
+    const finishedRuns = allRuns.filter(run => run.IsActive === false);
+  
+    // 2. Agrupa por player, pegando a run com maior timestamp
+    const latestByPlayer = Object.values(
+      finishedRuns.reduce((acc, run) => {
+        if (
+          !acc[run.PlayerName] ||
+          new Date(run.Timestamp) > new Date(acc[run.PlayerName].Timestamp)
+        ) {
+          acc[run.PlayerName] = run;
+        }
+        return acc;
+      }, {} as Record<string, IronmanRankingEntry>)
+    );
+  
+    // 3. Ordena por Score decrescente
+    return latestByPlayer.sort((a, b) => b.Score - a.Score);
+  }
 
 export default async function IronmanRankingPage() {
-  const ranking = await getRanking();
+  const ranking = await getLatestFinishedRuns();
 
   return (
     <main className="max-w-4xl mx-auto p-6">
