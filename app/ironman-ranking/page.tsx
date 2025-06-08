@@ -26,16 +26,16 @@ function formatSurvivalTime(ts: string | undefined | null): string {
     h = 0,
     m = 0,
     s = 0;
+  // ex: "2.12:04:55.6543210" ou "05:17:44.1234567"
   if (ts.includes(".")) {
-    // pode ser "d.hh:mm:ss" ou "hh:mm:ss.fff"
-    const [first, second] = ts.split(".");
-    if (second && first.includes(":") && !first.match(/^[0-9]+$/)) {
-      // "hh:mm:ss.fff"
+    const [first, rest] = ts.split(".");
+    if (first.includes(":")) {
+      // formato "hh:mm:ss.fff"
       [h, m, s] = first.split(":").map((x) => parseInt(x, 10) || 0);
-    } else if (second && first.match(/^[0-9]+$/)) {
-      // "d.hh:mm:ss"
+    } else {
+      // formato "d.hh:mm:ss.fff"
       days = parseInt(first, 10) || 0;
-      [h, m, s] = second.split(":").map((x) => parseInt(x, 10) || 0);
+      [h, m, s] = rest.split(":").map((x) => parseInt(x, 10) || 0);
     }
   } else {
     [h, m, s] = ts.split(":").map((x) => parseInt(x, 10) || 0);
