@@ -1,6 +1,7 @@
 // app/ironman-ranking/page.tsx
 
 import { db } from "@/lib/firestore";
+import { formatSurvivalTime } from "@/lib/time";
 
 type IronmanRankingEntry = {
   PlayerName: string;
@@ -65,7 +66,9 @@ export default async function IronmanRankingPage() {
                 <td className="px-4 py-2 text-center">{i + 1}</td>
                 <td className="px-4 py-2">{p.PlayerName}</td>
                 <td className="px-4 py-2">{p.Score}</td>
-                <td className="px-4 py-2">{p.SurvivalTime.split(".")[0]}</td>
+                <td className="px-4 py-2">
+                  {formatSurvivalTime(p.SurvivalTime)}
+                </td>
                 <td className="px-4 py-2">{p.PvPKills}</td>
                 <td className="px-4 py-2">{p.PvMKills}</td>
                 <td className="px-4 py-2">
