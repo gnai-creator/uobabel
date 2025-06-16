@@ -1,8 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Head from "next/head";
 import styles from "../../styles/Home.module.css";
+import type { Metadata } from "next";
+import { defaultMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  title: "Painel - UO Babel",
+  description:
+    "Gerencie seu acesso premium e vincule sua conta do Ultima Online no Painel do UO Babel.",
+};
 
 export default function PainelPage() {
   const [user, setUser] = useState<any>(null);
@@ -69,10 +77,6 @@ export default function PainelPage() {
 
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Painel - UO Babel</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
       <main className="max-w-xl mx-auto p-6 text-center">
         <h1 className="text-3xl font-bold mb-2">
           🎉 Bem-vindo, {user.fullName || "Patrono"}!

@@ -1,18 +1,19 @@
 // pages/index.tsx
-import Head from "next/head";
 import Image from "next/image";
 import type { FC } from "react";
+import Link from "next/link";
+import { defaultMetadata } from "@/lib/seo";
+import type { Metadata } from "next";
 import styles from "../styles/Home.module.css";
 import logo from "../public/logo.png";
-import Link from "next/link";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+};
 
 const Home: FC = () => {
   return (
     <div className={styles.container}>
-      <Head>
-        <title>UO Babel - Survival Hardcore</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
 
       <header className={styles.hero}>
         <div className={styles.heroContent}>

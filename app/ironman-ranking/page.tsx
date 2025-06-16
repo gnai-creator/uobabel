@@ -1,7 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
 import styles from "../../styles/Home.module.css";
+import type { Metadata } from "next";
+import { defaultMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  title: "Ironman Ranking - UO Babel",
+  description:
+    "Ranking dos sobreviventes mais habilidosos do modo Ironman no servidor UO Babel.",
+};
 
 type IronmanRankingEntry = {
   PlayerName: string;
@@ -64,10 +72,6 @@ export default function IronmanRankingPage() {
 
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Ironman Ranking - UO Babel</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
       <main className="w-full max-w-4xl mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6 text-center">🏆 Ironman Ranking</h1>
         <div className="overflow-x-auto rounded-lg shadow-lg">
