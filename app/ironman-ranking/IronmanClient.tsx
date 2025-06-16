@@ -80,7 +80,7 @@ export default function IronmanClient() {
     <div className={styles.container}>
       <main className="flex flex-col items-center w-full max-w-2xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-4">Ironman Ranking</h1>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-auto max-h-[70vh]">
           <table className="min-w-full w-full text-sm border border-gray-300">
             <thead>
               <tr>
