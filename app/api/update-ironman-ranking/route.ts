@@ -23,9 +23,26 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Salva no Firestore como antes
-  const docId = `${data.PlayerName}_${data.Timestamp || Date.now()}`;
-  await db.collection("ironmanRanking").doc(docId).set(data);
+  // Salva a nova entrada
+  const timestamp = data.Timestamp || Date.now();
+  const docId = `${data.PlayerName}_${timestamp}`;
+  await db.collection("ironmanRanking").doc(docId).set({ ...data, Timestamp: timestamp });
+
+  try {
+    const snapshot = await db
+      .collection("ironmanRanking")
+      .where("PlayerName", "==", data.PlayerName)
+      .get();
+
+    const sortedDocs = snapshot.docs.sort(
+      (a, b) => (b.data().Timestamp ?? 0) - (a.data().Timestamp ?? 0)
+    );
+
+    const docsToDelete = sortedDocs.slice(5);
+    await Promise.all(docsToDelete.map((d) => d.ref.delete()));
+  } catch (cleanupErr) {
+    console.error("Erro ao limpar runs antigas:", cleanupErr);
+  }
 
   return NextResponse.json({ success: true });
 }
