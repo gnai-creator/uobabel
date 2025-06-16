@@ -1,14 +1,18 @@
 // pages/privacy.tsx
-import Head from "next/head";
 import styles from "../../styles/Home.module.css";
+import type { Metadata } from "next";
+import { defaultMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  title: "Política de Privacidade - UO Babel",
+  description:
+    "Saiba como coletamos, usamos e protegemos seus dados no servidor UO Babel.",
+};
 
 export default function PrivacyPolicy() {
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Política de Privacidade - UO Babel</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
 
       <main className={styles.verticalPage}>
         <h1 className={styles.title}>Política de Privacidade</h1>

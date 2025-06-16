@@ -4,6 +4,15 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import type { Metadata } from "next";
+import { defaultMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  title: "Callback do Patreon - UO Babel",
+  description:
+    "Processando autentica\u00e7\u00e3o do Patreon para liberar acesso no UO Babel.",
+};
 
 function CallbackInner() {
   const router = useRouter();

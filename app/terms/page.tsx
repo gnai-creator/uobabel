@@ -1,14 +1,18 @@
 // pages/terms.tsx
-import Head from "next/head";
 import styles from "../../styles/Home.module.css";
+import type { Metadata } from "next";
+import { defaultMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  title: "Termos de Uso - UO Babel",
+  description:
+    "Condi\u00e7\u00f5es de uso para aproveitar o servidor de Ultima Online UO Babel.",
+};
 
 export default function TermsOfService() {
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Termos de Uso - UO Babel</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
 
       <main className={styles.verticalPage}>
         <h1 className={styles.title}>Termos de Uso</h1>

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import LegalBanner from "./components/LegalBanner"; // ou ajuste o caminho
+import LegalBanner from "./components/LegalBanner";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { defaultMetadata } from "@/lib/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "UO Babel - Survival Hardcore",
-  description: "UO Babel - Survival Hardcore",
+  ...defaultMetadata,
 };
 
 export default function RootLayout({

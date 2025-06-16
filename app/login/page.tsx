@@ -1,10 +1,19 @@
 "use client";
 
-import Head from "next/head";
 import Image from "next/image";
 import styles from "../../styles/Home.module.css";
 import logo from "../../public/logo.png";
 import { useEffect } from "react";
+
+import type { Metadata } from "next";
+import { defaultMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  title: "Login com Patreon - UO Babel",
+  description:
+    "Conecte sua conta do Patreon para acessar recursos premium do servidor UO Babel.",
+};
 
 import { useRouter } from "next/navigation";
 export default function LoginPage() {
@@ -48,10 +57,6 @@ export default function LoginPage() {
 
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Login com Patreon - UO Babel</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
 
       <header className={styles.hero}>
         <div className={styles.heroContent}>
