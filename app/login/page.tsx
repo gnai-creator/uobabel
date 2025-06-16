@@ -53,16 +53,18 @@ export default function LoginPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <header className={styles.header}>
-        <Image
-          src={logo}
-          alt="UO Babel Logo"
-          className={styles.logo}
-          width={180}
-          height={180}
-        />
-        <h1>UO Babel</h1>
-        <p className={styles.subtitle}>Servidor Survival Hardcore</p>
+      <header className={styles.hero}>
+        <div className={styles.heroContent}>
+          <Image
+            src={logo}
+            alt="UO Babel Logo"
+            className={styles.logo}
+            width={180}
+            height={180}
+          />
+          <h1 className={styles.title}>UO Babel</h1>
+          <p className={styles.subtitle}>Servidor Survival Hardcore</p>
+        </div>
       </header>
 
       <main className={styles.main}>
