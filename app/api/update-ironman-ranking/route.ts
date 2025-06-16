@@ -34,9 +34,11 @@ export async function POST(req: NextRequest) {
       .where("PlayerName", "==", data.PlayerName)
       .get();
 
-    const sortedDocs = snapshot.docs.sort(
-      (a, b) => (b.data().Timestamp ?? 0) - (a.data().Timestamp ?? 0)
-    );
+    const sortedDocs = snapshot.docs.sort((a, b) => {
+      const scoreDiff = (b.data().Score ?? 0) - (a.data().Score ?? 0);
+      if (scoreDiff !== 0) return scoreDiff;
+      return (b.data().Timestamp ?? 0) - (a.data().Timestamp ?? 0);
+    });
 
     const docsToDelete = sortedDocs.slice(5);
     await Promise.all(docsToDelete.map((d) => d.ref.delete()));
