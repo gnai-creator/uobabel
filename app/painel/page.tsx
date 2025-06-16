@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Head from "next/head";
+import styles from "../../styles/Home.module.css";
 
 export default function PainelPage() {
   const [user, setUser] = useState<any>(null);
@@ -66,13 +68,18 @@ export default function PainelPage() {
     );
 
   return (
-    <main className="max-w-xl mx-auto p-6 text-center">
-      <h1 className="text-3xl font-bold mb-2">
-        🎉 Bem-vindo, {user.fullName || "Patrono"}!
-      </h1>
-      <p className="text-gray-600">
-        Obrigado por apoiar o servidor <strong>UO Babel</strong> no Patreon.
-      </p>
+    <div className={styles.container}>
+      <Head>
+        <title>Painel - UO Babel</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <main className="max-w-xl mx-auto p-6 text-center">
+        <h1 className="text-3xl font-bold mb-2">
+          🎉 Bem-vindo, {user.fullName || "Patrono"}!
+        </h1>
+        <p className="text-gray-300">
+          Obrigado por apoiar o servidor <strong>UO Babel</strong> no Patreon.
+        </p>
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-2">
@@ -87,16 +94,16 @@ export default function PainelPage() {
           value={loginUO}
           onChange={(e) => setLoginUO(e.target.value)}
           placeholder="Ex: arthur_dragon"
-          className="w-full px-4 py-2 border rounded text-lg mb-4"
+          className="w-full px-4 py-2 border border-gray-700 bg-zinc-800 rounded text-lg mb-4 text-white"
         />
 
         <button
           onClick={salvarLogin}
           disabled={saving || !loginUO.trim()}
-          className={`px-6 py-2 rounded text-white ${
+          className={`px-6 py-2 rounded-full text-white transition-colors ${
             saving || !loginUO.trim()
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-red-700"
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-gradient-to-r from-red-600 to-pink-600 hover:opacity-90"
           }`}
         >
           {saving ? "Salvando..." : "Salvar login do UO"}
@@ -112,6 +119,7 @@ export default function PainelPage() {
           </p>
         )}
       </div>
-    </main>
+      </main>
+    </div>
   );
 }
