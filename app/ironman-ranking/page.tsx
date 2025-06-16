@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Head from "next/head";
+import styles from "../../styles/Home.module.css";
 
 type IronmanRankingEntry = {
   PlayerName: string;
@@ -61,21 +63,24 @@ export default function IronmanRankingPage() {
   }, []);
 
   return (
-    <main className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6 text-center text-white">
-        🏆 Ironman Ranking
-      </h1>
-      <div className="overflow-x-auto rounded-lg shadow">
-        <table className="min-w-full border border-gray-700 bg-zinc-900 text-zinc-100">
+    <div className={styles.container}>
+      <Head>
+        <title>Ironman Ranking - UO Babel</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <main className="w-full max-w-4xl mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-6 text-center">🏆 Ironman Ranking</h1>
+        <div className="overflow-x-auto rounded-lg shadow-lg">
+          <table className="min-w-full border border-gray-700 bg-zinc-900 text-zinc-100 text-center">
           <thead>
             <tr className="bg-zinc-800 border-b border-gray-700">
-              <th className="px-4 py-2">#</th>
-              <th className="px-4 py-2">Jogador</th>
-              <th className="px-4 py-2">Score</th>
-              <th className="px-4 py-2">Sobrevivência</th>
-              <th className="px-4 py-2">PvP Kills</th>
-              <th className="px-4 py-2">PvM Kills</th>
-              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2 text-center">#</th>
+              <th className="px-4 py-2 text-center">Jogador</th>
+              <th className="px-4 py-2 text-center">Score</th>
+              <th className="px-4 py-2 text-center">Sobrevivência</th>
+              <th className="px-4 py-2 text-center">PvP Kills</th>
+              <th className="px-4 py-2 text-center">PvM Kills</th>
+              <th className="px-4 py-2 text-center">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -104,14 +109,14 @@ export default function IronmanRankingPage() {
                   }
                 >
                   <td className="px-4 py-2 text-center">{i + 1}</td>
-                  <td className="px-4 py-2">{p.PlayerName}</td>
-                  <td className="px-4 py-2">{p.Score}</td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 text-center">{p.PlayerName}</td>
+                  <td className="px-4 py-2 text-center">{p.Score}</td>
+                  <td className="px-4 py-2 text-center">
                     {formatSurvivalTime(p.SurvivalTime)}
                   </td>
-                  <td className="px-4 py-2">{p.PvPKills}</td>
-                  <td className="px-4 py-2">{p.PvMKills}</td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 text-center">{p.PvPKills}</td>
+                  <td className="px-4 py-2 text-center">{p.PvMKills}</td>
+                  <td className="px-4 py-2 text-center">
                     {p.IsActive ? (
                       <span className="text-green-400">🟢 Vivo</span>
                     ) : (
@@ -123,7 +128,8 @@ export default function IronmanRankingPage() {
             )}
           </tbody>
         </table>
-      </div>
-    </main>
+        </div>
+      </main>
+    </div>
   );
 }
