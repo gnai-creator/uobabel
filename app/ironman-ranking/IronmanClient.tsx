@@ -52,7 +52,10 @@ export default function IronmanClient() {
     fetch("/api/ironman-ranking")
       .then((res) => res.json())
       .then((data) => {
-        setRanking(data.ranking);
+        // The API may return the ranking array directly or inside a
+        // `ranking` property. Handle both for backwards compatibility.
+        const entries = Array.isArray(data) ? data : data.ranking;
+        setRanking(entries);
         setLoading(false);
       })
       .catch(() => {
