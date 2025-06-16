@@ -1,7 +1,6 @@
-import { MetadataRoute } from "next";
 import { siteMetadata } from "@/lib/seo";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export async function GET(): Promise<Response> {
   const pages = [
     "",
     "login",
@@ -12,10 +11,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "patreon/callback",
   ];
 
-  const urls = pages.map((p) => ({
-    url: `${siteMetadata.siteUrl}/${p}`.replace(/\/$/, ""),
-    lastModified: new Date(),
-  }));
+  const urls = pages
+    .map((p) => {
+      const loc = `${siteMetadata.siteUrl}/${p}`.replace(/\/$/, "");
+      const lastmod = new Date().toISOString();
+      return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`;
+    })
+    .join("\n");
 
-  return urls;
+  const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
+
+  return new Response(body, {
+    headers: {
+      "Content-Type": "application/xml",
+    },
+  });
 }
