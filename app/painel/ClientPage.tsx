@@ -65,7 +65,7 @@ export default function ClientPage() {
 
   return (
     <div className={styles.container}>
-      <main className={styles.main}>
+      <main className="flex flex-col items-center w-full max-w-md mx-auto p-6">
         <h1 className="text-2xl font-bold mb-4">Painel do Usuário</h1>
         <p className="mb-4">Olá, {user.fullName}!</p>
         <div className="mb-4">

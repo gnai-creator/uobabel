@@ -78,10 +78,10 @@ export default function IronmanClient() {
 
   return (
     <div className={styles.container}>
-      <main className={styles.main}>
+      <main className="flex flex-col items-center w-full max-w-2xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-4">Ironman Ranking</h1>
         <div className="overflow-x-auto">
-          <table className="min-w-full border border-gray-300">
+          <table className="min-w-full w-full text-sm border border-gray-300">
             <thead>
               <tr>
                 <th className="px-4 py-2">Jogador</th>
