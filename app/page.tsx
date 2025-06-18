@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 const Home: FC = () => {
   return (
     <div className={styles.container}>
-
       <header className={styles.hero}>
         <div className={styles.heroContent}>
           <Image
@@ -43,16 +42,16 @@ const Home: FC = () => {
             Um dragão atacou a Torre de Babel. Um novo mundo nasce das cinzas.
           </p>
           <p>Baixe agora o client do servidor e comece a jogar.</p>
-          <a href="./UO Babel Launcher.zip" className={styles.btn}>
+          <a href="./UOBabelLauncher.zip" className={styles.btn}>
             Download Client Launcher
           </a>
-          <br />
+          {/* <br />
           <a
             href="https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabe-Zipl.zip?alt=media&token=6c1ba865-da81-4c90-94e4-0af9105e0be5"
             className={styles.btn}
           >
             Download Client Zip
-          </a>
+          </a> */}
         </section>
 
         <section className={styles.intro}>
