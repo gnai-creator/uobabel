@@ -1,3 +1,3 @@
-ZIP_URL = "https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabel.zip?alt=media&token=ad69f70a-30e5-4947-817a-11e0e23f5b24";
+ZIP_URL = "https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabel.zip?alt=media&token=afe4fd13-276f-433e-b54c-a265282a8b47";
 ZIP_VERSION_URL = "https://www.uobabel.com/version.txt";
 ZIP_HASH_URL = "https://www.uobabel.com/hash.txt";
