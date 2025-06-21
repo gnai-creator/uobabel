@@ -14,16 +14,15 @@ export default function SobreBabel() {
     <div className={styles.container}>
       <main className={styles.verticalPage}>
         <h1 className={styles.title}>Sobre Babel</h1>
+        <h2>Introdução</h2>
         <p className={styles.description}>
-          🎮 Sistema de IA Avançada e Recursos Exclusivos – Bem-vindo ao
-          UOBabel Server! 🌌 Prepare-se para uma experiência de Ultima
-          Online como você nunca viu antes! Nosso servidor vai muito além do
-          tradicional, trazendo inteligência artificial, imersão emocional e
-          recursos inéditos que transformam cada login em uma nova aventura.
+          🎮 Sistema de IA Avançada e Recursos Exclusivos – Bem-vindo ao UOBabel
+          Server! 🌌 Prepare-se para uma experiência de Ultima Online como você
+          nunca viu antes! Nosso servidor vai muito além do tradicional,
+          trazendo inteligência artificial, imersão emocional e recursos
+          inéditos que transformam cada login em uma nova aventura.
         </p>
-        <p>
-          ✨ Destaques do Núcleo Customizado do UOBabel Server:
-        </p>
+        <p>✨ Destaques do Núcleo Customizado do UOBabel Server:</p>
         <section className={styles.section}>
           <h2>🧠 NPCs com Memória e Inteligência Real</h2>
           <p>
@@ -31,16 +30,16 @@ export default function SobreBabel() {
             MemoryFeature, cada criatura pode registrar eventos importantes e
             reagir com base nas interações anteriores. E com o
             NpcIntelligenceFeature, esses dados vão direto para um serviço de IA
-            que transforma cada conversa com um NPC em um diálogo dinâmico, único
-            e imprevisível.
+            que transforma cada conversa com um NPC em um diálogo dinâmico,
+            único e imprevisível.
           </p>
         </section>
         <section className={styles.section}>
           <h2>🤖 Companheiros Inteligentes</h2>
           <p>
-            Com o CompanionFeature, você pode ter um aliado que obedece comandos,
-            interage com o ambiente e guarda memórias das suas aventuras,
-            criando um vínculo verdadeiro durante suas jornadas.
+            Com o CompanionFeature, você pode ter um aliado que obedece
+            comandos, interage com o ambiente e guarda memórias das suas
+            aventuras, criando um vínculo verdadeiro durante suas jornadas.
           </p>
         </section>
         <section className={styles.section}>
@@ -98,8 +97,8 @@ export default function SobreBabel() {
             Ironman.
           </p>
           <p>
-            Buriable Container: Sua única forma de guardar itens em Babel no modo
-            Ironman. Mas cuidado, se alguém souber onde vc enterrou…
+            Buriable Container: Sua única forma de guardar itens em Babel no
+            modo Ironman. Mas cuidado, se alguém souber onde vc enterrou…
           </p>
         </section>
         <section className={styles.section}>
@@ -110,7 +109,8 @@ export default function SobreBabel() {
           </p>
         </section>
         <section className={styles.section}>
-          <h2>🚀 O UOBabel não é só um servidor... é uma evolução de Ultima
+          <h2>
+            🚀 O UOBabel não é só um servidor... é uma evolução de Ultima
             Online!
           </h2>
           <p>
