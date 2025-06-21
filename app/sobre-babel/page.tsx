@@ -14,7 +14,7 @@ export default function SobreBabel() {
     <div className={styles.container}>
       <main className={styles.verticalPage}>
         <h1 className={styles.title}>Sobre Babel</h1>
-        <h2>Introdução</h2>
+        
         <p className={styles.description}>
           🎮 Sistema de IA Avançada e Recursos Exclusivos – Bem-vindo ao UOBabel
           Server! 🌌 Prepare-se para uma experiência de Ultima Online como você

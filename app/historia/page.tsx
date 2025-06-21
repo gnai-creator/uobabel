@@ -14,6 +14,7 @@ export default function Historia() {
     <div className={styles.container}>
       <main className={styles.verticalPage}>
         <h1 className={styles.title}>A História do mundo de Babel</h1>
+        <h2>Introdução</h2>
         <p className={styles.description}>
           Babel é um universo paralelo de Britannia. Um mundo ao mesmo tempo
           distante e conectado por laços invisíveis de magia e tragédia.
