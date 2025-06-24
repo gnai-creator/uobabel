@@ -1,5 +1,5 @@
 ZIP_URL = "https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabel.zip?alt=media&token=d9b71d56-f5f0-4485-94ab-cb7ffdec8bbf";
 ZIP_VERSION_URL = "https://www.uobabel.com/version.txt";
 ZIP_HASH_URL = "https://www.uobabel.com/hash.txt";
-ZIP_LAUNCHER_URL = https://www.uobabel.com/UOBabelLauncher.zip";
+ZIP_LAUNCHER_URL = "https://www.uobabel.com/UOBabelLauncher.zip";
 ZIP_BABELUO_URL = "https://www.uobabel.com/BabelUO.zip";
