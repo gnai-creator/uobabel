@@ -5,3 +5,4 @@ ZIP_HASH_URL = "https://www.uobabel.com/hash.txt";
 ZIP_LAUNCHER_URL = "https://www.uobabel.com/UOBabelLauncher.zip";
 ZIP_LINUX_LAUNCHER_URL = "https://www.uobabel.com/UOBabelLinuxLauncher.7z";
 ZIP_BABELUO_URL = "https://www.uobabel.com/BabelUO.zip";
+ZIP_BABELUO_LINUX_URL = "https://www.uobabel.com/BabelUOLinux.7z"
