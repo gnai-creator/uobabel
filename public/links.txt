@@ -1,5 +1,5 @@
 ZIP_URL = "https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabel.zip?alt=media&token=d9b71d56-f5f0-4485-94ab-cb7ffdec8bbf";
-ZIP_LINUX_URL = "https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabel.7z?alt=media&token=13280b69-4de3-4097-948b-672f4c254e03";
+ZIP_LINUX_URL = "https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabel.7z?alt=media&token=4050a245-92d9-4a61-9c70-7da8334e59b6";
 ZIP_VERSION_URL = "https://www.uobabel.com/version.txt";
 ZIP_HASH_URL = "https://www.uobabel.com/hash.txt";
 ZIP_LAUNCHER_URL = "https://www.uobabel.com/UOBabelLauncher.zip";
