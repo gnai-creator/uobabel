@@ -44,6 +44,8 @@ const Home: FC = () => {
             Um dragão atacou a Torre de Babel. Um novo mundo nasce das cinzas.
           </p>
           <p>Baixe agora o client do servidor e comece a jogar.</p>
+          <p> Se já tiver o launcher, baixe o client.</p>
+          <p> Se não tiver o launcher, baixe o launcher.</p>
           <a href="./UOBabelLauncher.zip" className={styles.btn}>
             Download Client Launcher
           </a>
