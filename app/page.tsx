@@ -47,11 +47,12 @@ const Home: FC = () => {
           <a href="./UOBabelLauncher.zip" className={styles.btn}>
             Download Client Launcher
           </a>
+          <br />
           <a
             href="https://firebasestorage.googleapis.com/v0/b/uobabelclient.firebasestorage.app/o/UOBabel.zip?alt=media&token=e338309d-fcc3-4424-91d1-5c1b31248ec7"
             className={styles.btn}
           >
-            Download Client
+            Download Client Zip
           </a>
           {/* <br />
           <a href="./UOBabelLinuxLauncher.7z" className={styles.btn}>
