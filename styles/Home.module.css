@@ -7,16 +7,16 @@
   flex-direction: column;
   background: linear-gradient(180deg, #0d0d0d, #1e1e1e 40%, #1c0f2b);
   color: #f4f4f4;
-  font-family: var(--font-geist-sans, 'Segoe UI', sans-serif);
+  font-family: var(--font-geist-sans, "Segoe UI", sans-serif);
 }
-  
+
 .hero {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: url('/Banner.png') center/cover no-repeat;
+  background: url("/Banner.png") center/cover no-repeat;
   padding: 8rem 1rem;
 }
 
@@ -34,7 +34,7 @@
   flex-direction: column;
   align-items: center;
 }
-  
+
 .logo {
   margin-bottom: 1rem;
   width: 180px;
@@ -45,13 +45,13 @@
   font-size: 2.5rem;
   font-weight: 700;
 }
-  
+
 .subtitle {
   color: #ddd;
   font-size: 1.2rem;
   margin-top: 0.25rem;
 }
-  
+
 .main {
   flex: 1;
   display: flex;
@@ -68,12 +68,12 @@
     flex-direction: column;
   }
 }
-  
+
 .intro h2 {
   font-size: 1.8rem;
   margin-bottom: 0.5rem;
 }
-  
+
 .btn {
   display: inline-block;
   margin-top: 1rem;
@@ -90,7 +90,7 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
-  
+
 .footer {
   text-align: center;
   padding: 2rem 1rem;
@@ -98,7 +98,7 @@
   font-size: 0.875rem;
   color: #888;
 }
-  /* styles/Home.module.css */
+/* styles/Home.module.css */
 
 .verticalPage {
   display: flex;

@@ -25,6 +25,8 @@ const Home: FC = () => {
           />
           <h1 className={styles.title}>UO Babel</h1>
           <p className={styles.subtitle}>Servidor Survival Hardcore</p>
+          <p className={styles.subtitle}>Login:</p> <p> login.uobabel.com</p>
+          <p className={styles.subtitle}>porta:</p> <p> 2593</p>
         </div>
       </header>
 
