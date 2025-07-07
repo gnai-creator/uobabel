@@ -9,7 +9,8 @@ interface RegisterIngameRequest {
 
 export async function POST(req: NextRequest) {
   try {
-    const { Email, Username } = (await req.json()) as Partial<RegisterIngameRequest>;
+    const { Email, Username } =
+      (await req.json()) as Partial<RegisterIngameRequest>;
 
     if (!Email || !Username) {
       return NextResponse.json(
@@ -18,18 +19,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const snapshot = await db.collection("users").where("Email", "==", Email).get();
+    const snapshot = await db.collection("users").doc(Email).get();
 
-    if (snapshot.empty) {
+    if (!snapshot.exists) {
       return NextResponse.json(
         { success: false, error: "Usuário não encontrado." },
         { status: 404 }
       );
     }
 
-    const doc = snapshot.docs[0];
-    const data = doc.data();
-    const usernames: string[] = Array.isArray(data.Usernames) ? data.Usernames : [];
+    const data = snapshot.data();
+    if (!data) {
+      return NextResponse.json(
+        { success: false, error: "Dados do usuário não encontrados." },
+        { status: 404 }
+      );
+    }
+
+    const usernames: string[] = Array.isArray(data.Usernames)
+      ? data.Usernames
+      : [];
 
     if (usernames.length >= 3) {
       return NextResponse.json(
@@ -38,7 +47,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await doc.ref.update({
+    await snapshot.ref.update({
       Usernames: admin.firestore.FieldValue.arrayUnion(Username),
     });
 
@@ -51,4 +60,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
