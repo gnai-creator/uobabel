@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firestore";
 import bcrypt from "bcryptjs";
+import { generateToken } from "@/lib/auth";
 
 interface LoginRequest {
   Email: string;
@@ -44,7 +45,25 @@ export async function POST(req: NextRequest) {
 
     const { Password: _password, ...publicData } = userData;
 
-    return NextResponse.json({ success: true, user: { id: doc.id, ...publicData } });
+    // Gerar token JWT
+    try {
+      const token = generateToken({
+        userId: doc.id,
+        email: userData.Email,
+      });
+
+      return NextResponse.json({
+        success: true,
+        user: { id: doc.id, ...publicData },
+        token: token,
+      });
+    } catch (tokenError: any) {
+      console.error("❌ Erro ao gerar token:", tokenError);
+      return NextResponse.json(
+        { success: false, error: "Erro ao gerar token de autenticação" },
+        { status: 500 }
+      );
+    }
   } catch (err: any) {
     console.error("Erro ao fazer login:", err);
     return NextResponse.json(
