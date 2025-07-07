@@ -54,7 +54,11 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        user: { id: doc.id, ...publicData },
+        user: {
+          id: userData.Email,
+          Email: userData.Email,
+          Usernames: userData.Usernames,
+        },
         token: token,
       });
     } catch (tokenError: any) {
