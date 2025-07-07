@@ -10,9 +10,9 @@ interface RegisterRequest {
 
 export async function POST(req: NextRequest) {
   try {
-    const { Email, Username, Password } = (await req.json()) as Partial<RegisterRequest>;
+    const { Email, Password } = (await req.json()) as Partial<RegisterRequest>;
 
-    if (!Email || !Username || !Password) {
+    if (!Email || !Password) {
       return NextResponse.json(
         { success: false, error: "Dados incompletos." },
         { status: 400 }
@@ -35,7 +35,6 @@ export async function POST(req: NextRequest) {
 
     await db.collection("users").add({
       Email,
-      Username,
       Password: hashed,
       createdAt: Date.now(),
     });
