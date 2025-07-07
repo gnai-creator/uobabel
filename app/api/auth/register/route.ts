@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firestore";
+import bcrypt from "bcryptjs";
 
 interface RegisterRequest {
   Email: string;
@@ -30,10 +31,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const hashed = await bcrypt.hash(Password, 10);
+
     await db.collection("users").add({
       Email,
       Username,
-      Password,
+      Password: hashed,
       createdAt: Date.now(),
     });
 
