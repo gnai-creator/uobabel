@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     const hashed = await bcrypt.hash(Password, 10);
 
-    await db.collection("users").add({
+    await db.collection("users").doc(Email).set({
       Email,
       Password: hashed,
       createdAt: Date.now(),
