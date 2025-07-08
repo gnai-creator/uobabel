@@ -19,22 +19,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const snapshot = await db
-      .collection("users")
-      .where("Email", "==", Email)
-      .get();
+    const doc = await db.collection("users").doc(Email).get();
 
-    if (snapshot.empty) {
+    if (!doc.exists) {
       return NextResponse.json(
         { success: false, error: "Credenciais inválidas." },
         { status: 401 }
       );
     }
 
-    const doc = snapshot.docs[0];
     const userData = doc.data();
 
-    const valid = await bcrypt.compare(Password, userData.Password);
+    const valid = await bcrypt.compare(Password, userData?.Password as string);
 
     if (!valid) {
       return NextResponse.json(
@@ -43,21 +39,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { Password: _password, ...publicData } = userData;
+    const { Password: _password, ...publicData } = userData as any;
 
     // Gerar token JWT
     try {
       const token = generateToken({
         userId: doc.id,
-        email: userData.Email,
+        email: userData?.Email,
       });
 
       return NextResponse.json({
         success: true,
         user: {
-          id: userData.Email,
-          Email: userData.Email,
-          Usernames: userData.Usernames,
+          id: userData?.Email,
+          Email: userData?.Email,
+          Usernames: userData?.Usernames,
         },
         token: token,
       });
